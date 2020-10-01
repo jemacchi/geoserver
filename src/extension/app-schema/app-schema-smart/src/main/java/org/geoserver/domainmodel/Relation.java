@@ -7,6 +7,10 @@ abstract public class Relation extends AbstractDomainObject {
 	    ONE,
 	    MULTIPLE
 	}
+
+	public Relation(String name) {
+		super(name);
+	}
 	
 	private Entity sourceEntity;
 	private Entity destinationEntity;

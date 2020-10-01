@@ -2,14 +2,14 @@ package org.geoserver.domainmodel;
 
 public abstract class AbstractDomainObject implements Comparable<AbstractDomainObject> {
 	
-	private String name;
+	private final String name;
+	
+	public AbstractDomainObject(String name) {
+		this.name = name;
+	}
 
 	public String getName() {
 		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
 	}
 
 }

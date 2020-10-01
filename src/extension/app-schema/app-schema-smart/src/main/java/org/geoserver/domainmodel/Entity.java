@@ -4,6 +4,10 @@ import java.util.List;
 
 abstract public class Entity extends AbstractDomainObject {
 	
+	public Entity(String name) {
+		super(name);
+	}
+
 	private List<Attribute> attributes ;
 
 	public List<Attribute> getAttributes() {

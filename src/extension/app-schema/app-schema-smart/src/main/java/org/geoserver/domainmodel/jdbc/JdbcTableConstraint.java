@@ -1,25 +1,24 @@
 package org.geoserver.domainmodel.jdbc;
 
-import com.google.common.collect.ComparisonChain;
 import java.util.Objects;
 
 import org.geoserver.domainmodel.AbstractDomainObject;
-import org.geoserver.domainmodel.Attribute;
 
-public class JdbcTableConstraint extends Attribute {
+import com.google.common.collect.ComparisonChain;
+
+public class JdbcTableConstraint extends AbstractDomainObject {
     private final JdbcTable table;
-    private final String constraintName;
 
-    public JdbcTableConstraint(JdbcTable table, String constraintName) {
-        this.table = table;
-        this.constraintName = constraintName;
+    public JdbcTableConstraint(JdbcTable table, String name) {
+        super(name);
+    	this.table = table;
     }
 
     @Override
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder(this.table.toString());
         stringBuilder.append(" - ");
-        stringBuilder.append(this.constraintName);
+        stringBuilder.append(this.getName());
         return stringBuilder.toString();
     }
 
@@ -34,15 +33,11 @@ public class JdbcTableConstraint extends Attribute {
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.table, this.constraintName);
+        return Objects.hash(this.table, this.getName());
     }
 
     public JdbcTable getTable() {
         return table;
-    }
-
-    public String getConstraintName() {
-        return constraintName;
     }
 
 	@Override
@@ -51,7 +46,7 @@ public class JdbcTableConstraint extends Attribute {
 			JdbcTableConstraint tc = (JdbcTableConstraint) tableConstraint;
             return ComparisonChain.start()
                     .compare(this.table, tc.getTable())
-                    .compare(this.constraintName, tc.getConstraintName())
+                    .compare(this.getName(), tc.getName())
                     .result();
         }
         return 1;

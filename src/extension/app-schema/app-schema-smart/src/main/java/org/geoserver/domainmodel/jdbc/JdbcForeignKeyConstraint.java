@@ -7,8 +7,8 @@ import org.geoserver.domainmodel.AbstractDomainObject;
 public class JdbcForeignKeyConstraint extends JdbcTableConstraint {
     private final JdbcTable relatedTable;
 
-    public JdbcForeignKeyConstraint(JdbcTable table, String constraintName, JdbcTable relatedTable) {
-        super(table, constraintName);
+    public JdbcForeignKeyConstraint(JdbcTable table, String name, JdbcTable relatedTable) {
+        super(table, name);
         this.relatedTable = relatedTable;
     }
 
@@ -31,7 +31,7 @@ public class JdbcForeignKeyConstraint extends JdbcTableConstraint {
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.getTable(), this.getConstraintName());
+        return Objects.hash(this.getTable(), this.getName());
     }
 
     @Override

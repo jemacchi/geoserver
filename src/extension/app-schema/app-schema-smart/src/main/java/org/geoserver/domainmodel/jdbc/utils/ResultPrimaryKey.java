@@ -24,7 +24,7 @@ public class ResultPrimaryKey {
             stringBuilder.deleteCharAt(stringBuilder.length() - 1);
         }
         this.fields = stringBuilder.toString();
-        this.constraintName = primaryKey.getConstraintName();
+        this.constraintName = primaryKey.getName();
     }
 
     @Override

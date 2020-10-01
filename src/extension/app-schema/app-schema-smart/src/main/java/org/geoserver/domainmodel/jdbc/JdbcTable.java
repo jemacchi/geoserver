@@ -10,12 +10,11 @@ import org.geoserver.domainmodel.Entity;
 public class JdbcTable extends Entity {
     private final String catalog;
     private final String schema;
-    private final String tableName;
 
-    public JdbcTable(String catalog, String schema, String tableName) {
-        this.catalog = catalog;
+    public JdbcTable(String catalog, String schema, String name) {
+    	super(name);
+    	this.catalog = catalog;
         this.schema = schema;
-        this.tableName = tableName;
     }
 
     @Override
@@ -29,7 +28,7 @@ public class JdbcTable extends Entity {
             stringBuilder.append(schema);
             stringBuilder.append(".");
         }
-        stringBuilder.append(tableName);
+        stringBuilder.append(this.getName());
         return stringBuilder.toString();
     }
 
@@ -44,7 +43,7 @@ public class JdbcTable extends Entity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.catalog, this.schema, this.tableName);
+        return Objects.hash(this.catalog, this.schema, this.getName());
     }
 
     @Override
@@ -55,12 +54,12 @@ public class JdbcTable extends Entity {
 	            return ComparisonChain.start()
 	                    .compare(this.catalog, t.getCatalog())
 	                    .compare(this.schema, t.getSchema())
-	                    .compare(this.tableName, t.getTableName())
+	                    .compare(this.getName(), t.getName())
 	                    .result();
         	} else if (this.catalog == null && t.getCatalog() == null) {
         		return ComparisonChain.start()
 	                    .compare(this.schema, t.getSchema())
-	                    .compare(this.tableName, t.getTableName())
+	                    .compare(this.getName(), t.getName())
 	                    .result();
         	}
         }
@@ -75,7 +74,4 @@ public class JdbcTable extends Entity {
         return schema;
     }
 
-    public String getTableName() {
-        return tableName;
-    }
 }

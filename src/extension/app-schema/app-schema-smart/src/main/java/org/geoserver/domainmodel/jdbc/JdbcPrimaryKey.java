@@ -44,7 +44,7 @@ public class JdbcPrimaryKey extends JdbcTableConstraint {
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.getTable(), this.getConstraintName());
+        return Objects.hash(this.getTable(), this.getName());
     }
 
     @Override
