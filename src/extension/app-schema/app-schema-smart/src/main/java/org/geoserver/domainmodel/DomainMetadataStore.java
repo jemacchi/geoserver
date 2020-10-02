@@ -6,8 +6,12 @@ public interface DomainMetadataStore {
 	
 	public List<Entity> getEntities();
 	
-	public List<Relation> getRelations(Entity entity);
+	public List<Relation> getRelations();
 	
-	public List<Attribute> getAttributes(Entity entity);
+	public List<Relation> getEntityRelations(Entity entity);
+	
+	public List<Attribute> getAttributes();
+	
+	public void populateModel() throws Exception;
 
 }

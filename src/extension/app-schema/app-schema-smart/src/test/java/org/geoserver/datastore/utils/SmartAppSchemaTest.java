@@ -7,12 +7,16 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import org.geoserver.domainmodel.Attribute;
+import org.geoserver.domainmodel.Entity;
+import org.geoserver.domainmodel.Relation;
 import org.geoserver.domainmodel.jdbc.JdbcColumn;
+import org.geoserver.domainmodel.jdbc.JdbcDomainModel;
 import org.geoserver.domainmodel.jdbc.JdbcForeignKeyColumn;
-import org.geoserver.domainmodel.jdbc.JdbcForeignKeyConstraint;
-import org.geoserver.domainmodel.jdbc.JdbcPrimaryKey;
 import org.geoserver.domainmodel.jdbc.JdbcTable;
 import org.geoserver.domainmodel.jdbc.JdbcUtilities;
+import org.geoserver.domainmodel.jdbc.constraint.JdbcForeignKeyConstraint;
+import org.geoserver.domainmodel.jdbc.constraint.JdbcPrimaryKeyConstraint;
 import org.junit.Test;
 
 import junit.framework.TestCase;
@@ -31,11 +35,27 @@ public class SmartAppSchemaTest extends TestCase {
 	protected void setUp() throws Exception {
     	this.metaData = SmartAppSchemaTestUtils.getConnectionMetaData(POSTGRES_URL, POSTGRES_USER, POSTGRES_PASS);
 	}
+    
+    @Test
+    public void testJdbcDomainModelPopulation() throws Exception {
+    	JdbcDomainModel jdm = new JdbcDomainModel(metaData.getConnection(), null, SCHEMA);
+    	jdm.populateModel();
+    	System.out.println("--------------------------------------------------------");
+    	List<Entity> tables = jdm.getEntities();
+    	SmartAppSchemaTestUtils.printObjectsFromList(tables);
+    	System.out.println("--------------------------------------------------------");
+    	List<Attribute> attributes = jdm.getAttributes();
+    	SmartAppSchemaTestUtils.printObjectsFromList(attributes);
+    	System.out.println("--------------------------------------------------------");
+    	List<Relation> relations = jdm.getRelations();
+    	SmartAppSchemaTestUtils.printObjectsFromList(relations);
+    	
+    }
 
     @Test
     public void testMeteoPrimaryKeys() throws Exception {
         List<JdbcTable> tables = JDBC_UTILITIES.getSchemaTables(metaData, SCHEMA);
-        SortedMap<JdbcTable, JdbcPrimaryKey> pkMap = JDBC_UTILITIES.getPrimaryKeyColumns(metaData, tables);
+        SortedMap<Entity, JdbcPrimaryKeyConstraint> pkMap = JDBC_UTILITIES.getPrimaryKeyColumns(metaData, tables);
         SmartAppSchemaTestUtils.printPrimaryKeys(pkMap);
     }
     
@@ -51,46 +71,52 @@ public class SmartAppSchemaTest extends TestCase {
     
     @Test
     public void testMeteoStationsTablePrimaryKey() throws Exception{
-        JdbcTable table = new JdbcTable(null, SCHEMA, "meteo_stations");
+        JdbcTable table = new JdbcTable(metaData.getConnection(), null, SCHEMA, "meteo_stations");
         List<JdbcTable> tables = new ArrayList<JdbcTable>();
         tables.add(table);
-        SortedMap<JdbcTable, JdbcPrimaryKey> pkMap = JDBC_UTILITIES.getPrimaryKeyColumns(metaData, tables);
+        SortedMap<Entity, JdbcPrimaryKeyConstraint> pkMap = JDBC_UTILITIES.getPrimaryKeyColumns(metaData, tables);
         SmartAppSchemaTestUtils.printPrimaryKeys(pkMap);
     }
     
     @Test
     public void testMeteoStationsTableColumns() throws Exception{
-        JdbcTable table = new JdbcTable(null, SCHEMA, "meteo_stations");
+        JdbcTable table = new JdbcTable(metaData.getConnection(), null, SCHEMA, "meteo_stations");
         List<JdbcTable> tables = new ArrayList<JdbcTable>();
         tables.add(table);
-        SortedMap<JdbcTable, List<JdbcColumn>> cMap = JDBC_UTILITIES.getColumns(metaData, tables);
+        SortedMap<JdbcTable, List<Attribute>> cMap = JDBC_UTILITIES.getColumns(metaData, tables);
         SmartAppSchemaTestUtils.printColumns(cMap);
     }
 
     @Test
     public void testMeteoObservationsTableColumns() throws Exception{
-        JdbcTable table = new JdbcTable(null, SCHEMA, "meteo_observations");
+        JdbcTable table = new JdbcTable(metaData.getConnection(), null, SCHEMA, "meteo_observations");
         List<JdbcTable> tables = new ArrayList<JdbcTable>();
         tables.add(table);
-        SortedMap<JdbcTable, List<JdbcColumn>> cMap = JDBC_UTILITIES.getColumns(metaData, tables);
+        SortedMap<JdbcTable, List<Attribute>> cMap = JDBC_UTILITIES.getColumns(metaData, tables);
         SmartAppSchemaTestUtils.printColumns(cMap);
+    }
+    
+    @Test
+    public void testMeteoObservationsTableAttributes() throws Exception{
+        JdbcTable table = new JdbcTable(metaData.getConnection(), null, SCHEMA, "meteo_observations");
+        SmartAppSchemaTestUtils.printObjectsFromList(table.getAttributes());
     }
     
     @Test
     public void testMeteoSchemaForeignKeys() throws Exception {
         List<JdbcTable> tables = JDBC_UTILITIES.getSchemaTables(metaData, SCHEMA);
         SortedMap<JdbcForeignKeyConstraint, Collection<JdbcForeignKeyColumn>> fkMap = JDBC_UTILITIES.getForeignKeys(metaData, tables);
-        SortedMap<JdbcTable, JdbcPrimaryKey> pkMap = JDBC_UTILITIES.getPrimaryKeyColumns(metaData, tables);
+        SortedMap<Entity, JdbcPrimaryKeyConstraint> pkMap = JDBC_UTILITIES.getPrimaryKeyColumns(metaData, tables);
         SortedMap<String, Collection<String>> uniqueIndexMultimap = JDBC_UTILITIES.getIndexColumns(metaData, tables, true, true);
         SmartAppSchemaTestUtils.printForeignKeys(fkMap, pkMap, uniqueIndexMultimap);
     }
 
     @Test
     public void testMeteoObservationsTableForeignKeys() throws Exception {
-        JdbcTable table = new JdbcTable(null, SCHEMA, "meteo_observations");
+        JdbcTable table = new JdbcTable(metaData.getConnection(),null, SCHEMA, "meteo_observations");
         SortedMap<JdbcForeignKeyConstraint, Collection<JdbcForeignKeyColumn>> fkMultimap = JDBC_UTILITIES.getForeignKeysByTable(metaData, table);
-        JdbcPrimaryKey primaryKey = JDBC_UTILITIES.getPrimaryKeyColumnsByTable(metaData, table);
-        SortedMap<JdbcTable, JdbcPrimaryKey> pkMap = new TreeMap<JdbcTable, JdbcPrimaryKey>();
+        JdbcPrimaryKeyConstraint primaryKey = JDBC_UTILITIES.getPrimaryKeyColumnsByTable(metaData, table);
+        SortedMap<Entity, JdbcPrimaryKeyConstraint> pkMap = new TreeMap<Entity, JdbcPrimaryKeyConstraint>();
         pkMap.put(table, primaryKey);
         SortedMap<String, Collection<String>> uniqueIndexMultimap = JDBC_UTILITIES.getIndexesByTable(metaData, table, true, true);
         SmartAppSchemaTestUtils.printForeignKeys(fkMultimap, pkMap, uniqueIndexMultimap);
@@ -98,10 +124,10 @@ public class SmartAppSchemaTest extends TestCase {
     
     @Test
     public void testMeteoStationsTableForeignKeys() throws Exception {
-        JdbcTable table = new JdbcTable(null, SCHEMA, "meteo_stations");
+        JdbcTable table = new JdbcTable(metaData.getConnection(),null, SCHEMA, "meteo_stations");
         SortedMap<JdbcForeignKeyConstraint, Collection<JdbcForeignKeyColumn>> fkMultimap = JDBC_UTILITIES.getForeignKeysByTable(metaData, table);
-        JdbcPrimaryKey primaryKey = JDBC_UTILITIES.getPrimaryKeyColumnsByTable(metaData, table);
-        SortedMap<JdbcTable, JdbcPrimaryKey> pkMap = new TreeMap<JdbcTable, JdbcPrimaryKey>();
+        JdbcPrimaryKeyConstraint primaryKey = JDBC_UTILITIES.getPrimaryKeyColumnsByTable(metaData, table);
+        SortedMap<Entity, JdbcPrimaryKeyConstraint> pkMap = new TreeMap<Entity, JdbcPrimaryKeyConstraint>();
         pkMap.put(table, primaryKey);
         SortedMap<String, Collection<String>> uniqueIndexMultimap = JDBC_UTILITIES.getIndexesByTable(metaData, table, true, true);
         SmartAppSchemaTestUtils.printForeignKeys(fkMultimap, pkMap, uniqueIndexMultimap);
@@ -116,7 +142,7 @@ public class SmartAppSchemaTest extends TestCase {
 
     @Test
     public void testMeteoStationTableIndexes() throws Exception {
-        JdbcTable table = new JdbcTable(null, SCHEMA, "meteo_stations");
+        JdbcTable table = new JdbcTable(metaData.getConnection(),null, SCHEMA, "meteo_stations");
         SortedMap<String, Collection<String>> uniqueIndexMultimap = JDBC_UTILITIES.getIndexesByTable(metaData, table, false, true);
         SmartAppSchemaTestUtils.printIndexes(uniqueIndexMultimap);
     }
@@ -130,7 +156,7 @@ public class SmartAppSchemaTest extends TestCase {
 
     @Test
     public void testMeteoStationsTableUniqueIndexes() throws Exception {
-        JdbcTable table = new JdbcTable(null, SCHEMA, "meteo_stations");
+        JdbcTable table = new JdbcTable(metaData.getConnection(),null, SCHEMA, "meteo_stations");
         SortedMap<String, Collection<String>> uniqueIndexMultimap =	JDBC_UTILITIES.getIndexesByTable(metaData, table, true, true);
         SmartAppSchemaTestUtils.printIndexes(uniqueIndexMultimap);
     }

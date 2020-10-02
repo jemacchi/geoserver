@@ -1,6 +1,6 @@
 package org.geoserver.domainmodel.jdbc.utils;
 
-import org.geoserver.domainmodel.jdbc.JdbcPrimaryKey;
+import org.geoserver.domainmodel.jdbc.constraint.JdbcPrimaryKeyConstraint;
 
 public class ResultPrimaryKey {
     private final String table;
@@ -13,7 +13,7 @@ public class ResultPrimaryKey {
         this.constraintName = constraintName;
     }
 
-    public ResultPrimaryKey(JdbcPrimaryKey primaryKey) {
+    public ResultPrimaryKey(JdbcPrimaryKeyConstraint primaryKey) {
         this.table = primaryKey.getTable().toString();
         StringBuilder stringBuilder = new StringBuilder();
         if (primaryKey.getColumnNames() != null && !primaryKey.getColumnNames().isEmpty()) {

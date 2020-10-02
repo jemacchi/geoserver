@@ -4,11 +4,11 @@ import java.util.List;
 
 abstract public class Entity extends AbstractDomainObject {
 	
+	protected List<Attribute> attributes ;
+	
 	public Entity(String name) {
 		super(name);
 	}
-
-	private List<Attribute> attributes ;
 
 	public List<Attribute> getAttributes() {
 		return attributes;

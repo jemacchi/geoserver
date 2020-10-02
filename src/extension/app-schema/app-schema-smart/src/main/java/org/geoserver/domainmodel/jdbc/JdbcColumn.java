@@ -1,5 +1,6 @@
 package org.geoserver.domainmodel.jdbc;
 
+import java.sql.Connection;
 import java.util.Objects;
 
 import org.geoserver.domainmodel.AbstractDomainObject;
@@ -7,7 +8,7 @@ import org.geoserver.domainmodel.Attribute;
 
 import com.google.common.collect.ComparisonChain;
 
-public class JdbcColumn extends Attribute {
+public class JdbcColumn extends Attribute implements JdbcConnectable{
 
     public JdbcColumn(JdbcTable table, String columnName, String columnType) {
         super(table, columnName, columnType);
@@ -46,5 +47,10 @@ public class JdbcColumn extends Attribute {
         }
         return 1;
     }
+
+	@Override
+	public Connection getConnection() {
+		return ((JdbcTable)this.getEntity()).getConnection();
+	}
 
 }

@@ -1,20 +1,28 @@
 package org.geoserver.domainmodel.jdbc;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.ComparisonChain;
+import java.sql.Connection;
+import java.util.List;
 import java.util.Objects;
 
 import org.geoserver.domainmodel.AbstractDomainObject;
+import org.geoserver.domainmodel.Attribute;
 import org.geoserver.domainmodel.Entity;
 
-public class JdbcTable extends Entity {
+import com.google.common.base.Strings;
+import com.google.common.collect.ComparisonChain;
+import com.google.common.util.concurrent.UncheckedExecutionException;
+
+public class JdbcTable extends Entity implements JdbcConnectable {
+	private final Connection connection;
     private final String catalog;
     private final String schema;
 
-    public JdbcTable(String catalog, String schema, String name) {
+    public JdbcTable(Connection connection, String catalog, String schema, String name) {
     	super(name);
+    	this.connection = connection;
     	this.catalog = catalog;
         this.schema = schema;
+        this.attributes = null;
     }
 
     @Override
@@ -65,6 +73,18 @@ public class JdbcTable extends Entity {
         }
         return 1;
     }
+    
+    @Override
+    public List<Attribute> getAttributes() {
+    	try {
+    		if (attributes == null) {
+    			attributes = JdbcUtilities.getInstance().getColumnsByTable(connection.getMetaData(), this);
+    		}
+    		return attributes;
+		} catch (Exception e) {
+			throw new UncheckedExecutionException("Cannot get attributes from DatabaseMetadata", e);
+		}
+	}
 
     public String getCatalog() {
         return catalog;
@@ -72,6 +92,10 @@ public class JdbcTable extends Entity {
 
     public String getSchema() {
         return schema;
+    }
+    
+    public Connection getConnection() {
+    	return connection;
     }
 
 }

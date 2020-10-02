@@ -4,14 +4,14 @@ import org.geoserver.domainmodel.DomainMetadataStore;
 
 public class DomainModelBuilder {
 	
-	private DomainMetadataStore domain;
+	private DomainMetadataStore domainMetadataStore;
 	
 	public DomainModelBuilder(DomainMetadataStore dms) {
-		this.domain = dms;
+		this.domainMetadataStore = dms;
 	}
 
-	public DomainMetadataStore getDomain() {
-		return domain;
+	public DomainMetadataStore getDomainMetadataStore() {
+		return domainMetadataStore;
 	}
 
 }

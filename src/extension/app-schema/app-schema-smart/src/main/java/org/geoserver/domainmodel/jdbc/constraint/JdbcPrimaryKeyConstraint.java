@@ -1,4 +1,4 @@
-package org.geoserver.domainmodel.jdbc;
+package org.geoserver.domainmodel.jdbc.constraint;
 
 import java.util.HashMap;
 import java.util.List;
@@ -6,12 +6,13 @@ import java.util.Map;
 import java.util.Objects;
 
 import org.geoserver.domainmodel.AbstractDomainObject;
+import org.geoserver.domainmodel.jdbc.JdbcTable;
 
-public class JdbcPrimaryKey extends JdbcTableConstraint {
+public class JdbcPrimaryKeyConstraint extends JdbcTableConstraint {
     private final List<String> columnNames;
     private final Map<String, Integer> columnOrderMap;
 
-    public JdbcPrimaryKey(JdbcTable table, String constraintName, List<String> columnNames) {
+    public JdbcPrimaryKeyConstraint(JdbcTable table, String constraintName, List<String> columnNames) {
         super(table, constraintName);
         this.columnNames = columnNames;
         this.columnOrderMap = new HashMap<String, Integer>();
@@ -35,10 +36,10 @@ public class JdbcPrimaryKey extends JdbcTableConstraint {
 
     @Override
     public boolean equals(Object object) {
-        if (object == null || !(object instanceof JdbcPrimaryKey)) {
+        if (object == null || !(object instanceof JdbcPrimaryKeyConstraint)) {
             return false;
         }
-        JdbcPrimaryKey primaryKey = (JdbcPrimaryKey) object;
+        JdbcPrimaryKeyConstraint primaryKey = (JdbcPrimaryKeyConstraint) object;
         return this.compareTo(primaryKey) == 0;
     }
 
@@ -49,7 +50,7 @@ public class JdbcPrimaryKey extends JdbcTableConstraint {
 
     @Override
     public int compareTo(AbstractDomainObject tableConstraint) {
-        JdbcPrimaryKey indexConstraint = (JdbcPrimaryKey) tableConstraint;
+        JdbcPrimaryKeyConstraint indexConstraint = (JdbcPrimaryKeyConstraint) tableConstraint;
         return super.compareTo(indexConstraint);
     }
 

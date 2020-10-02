@@ -4,27 +4,35 @@ abstract public class Relation extends AbstractDomainObject {
 
 	public enum Cardinality {
 	    ZEROONE,
-	    ONE,
-	    MULTIPLE
+	    ONEONE,
+	    MULTIPLEONE
 	}
 
 	public Relation(String name) {
 		super(name);
 	}
 	
-	private Entity sourceEntity;
-	private Entity destinationEntity;
+	protected Attribute sourceAttribute;
+	protected Attribute destinationAttribute;
 	
-	private Attribute sourceAttribute;
-	private Attribute destinationAttribute;
+	private Cardinality cardinality;
 	
-	private Cardinality sourceCardinality;
-	private Cardinality destinationCardinality;
-	
-	public boolean belongsToRelation(Entity e) {
-		if ((sourceEntity.compareTo(e) == 0) || (destinationEntity.compareTo(e) == 0)) 
+	public boolean participatesIn(Entity e) {
+		if ((sourceAttribute.getEntity().compareTo(e) == 0) || (destinationAttribute.getEntity().compareTo(e) == 0)) 
 			return true;
 		return false;
 	}
 	
+	public Attribute getSourceAttribute() {
+		return this.sourceAttribute;
+	}
+
+	public Attribute getDestinationAttribute() {
+		return this.destinationAttribute;
+	}
+	
+	public Cardinality getCardinality( ) {
+		return this.cardinality;
+	}
+
 }

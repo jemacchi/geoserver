@@ -7,12 +7,14 @@ import java.util.Collection;
 import java.util.List;
 import java.util.SortedMap;
 
+import org.geoserver.domainmodel.Attribute;
+import org.geoserver.domainmodel.Entity;
 import org.geoserver.domainmodel.jdbc.JdbcColumn;
 import org.geoserver.domainmodel.jdbc.JdbcForeignKeyColumn;
-import org.geoserver.domainmodel.jdbc.JdbcForeignKeyConstraint;
-import org.geoserver.domainmodel.jdbc.JdbcPrimaryKey;
 import org.geoserver.domainmodel.jdbc.JdbcTable;
 import org.geoserver.domainmodel.jdbc.JdbcUtilities;
+import org.geoserver.domainmodel.jdbc.constraint.JdbcForeignKeyConstraint;
+import org.geoserver.domainmodel.jdbc.constraint.JdbcPrimaryKeyConstraint;
 import org.geoserver.domainmodel.jdbc.utils.ResultColumn;
 import org.geoserver.domainmodel.jdbc.utils.ResultForeignKey;
 import org.geoserver.domainmodel.jdbc.utils.ResultIndex;
@@ -38,7 +40,7 @@ public class SmartAppSchemaTestUtils {
         }
     }
     
-	public static void printPrimaryKeys(SortedMap<JdbcTable, JdbcPrimaryKey>  pkMap) {
+	public static void printPrimaryKeys(SortedMap<Entity, JdbcPrimaryKeyConstraint>  pkMap) {
         List<ResultPrimaryKey> pkList = JDBC_UTILITIES.getResultPrimaryKeys(pkMap);
         if(pkList != null)
         {
@@ -49,7 +51,7 @@ public class SmartAppSchemaTestUtils {
         }
     }
     
-	public static void printColumns(SortedMap<JdbcTable, List<JdbcColumn>>  cMap) {
+	public static void printColumns(SortedMap<JdbcTable, List<Attribute>>  cMap) {
         List<ResultColumn> cList = JDBC_UTILITIES.getResultColumns(cMap);
         if(cList != null)
         {
@@ -60,7 +62,7 @@ public class SmartAppSchemaTestUtils {
         }
     }
     
-	public static void printForeignKeys(SortedMap<JdbcForeignKeyConstraint, Collection<JdbcForeignKeyColumn>> fkMap, SortedMap<JdbcTable, JdbcPrimaryKey> pkMap, SortedMap<String, Collection<String>> uniqueIndexMap) {
+	public static void printForeignKeys(SortedMap<JdbcForeignKeyConstraint, Collection<JdbcForeignKeyColumn>> fkMap, SortedMap<Entity, JdbcPrimaryKeyConstraint> pkMap, SortedMap<String, Collection<String>> uniqueIndexMap) {
         List<ResultForeignKey> resultForeignKeyList = JDBC_UTILITIES.getResultForeignKeys(fkMap, pkMap, uniqueIndexMap);
         if(resultForeignKeyList != null)
         {

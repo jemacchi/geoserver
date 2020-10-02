@@ -1,8 +1,9 @@
-package org.geoserver.domainmodel.jdbc;
+package org.geoserver.domainmodel.jdbc.constraint;
 
 import java.util.Objects;
 
 import org.geoserver.domainmodel.AbstractDomainObject;
+import org.geoserver.domainmodel.jdbc.JdbcTable;
 
 public class JdbcIndexConstraint extends JdbcTableConstraint {
 

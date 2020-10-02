@@ -1,12 +1,14 @@
-package org.geoserver.domainmodel.jdbc;
+package org.geoserver.domainmodel.jdbc.constraint;
 
 import java.util.Objects;
 
 import org.geoserver.domainmodel.AbstractDomainObject;
+import org.geoserver.domainmodel.Constraint;
+import org.geoserver.domainmodel.jdbc.JdbcTable;
 
 import com.google.common.collect.ComparisonChain;
 
-public class JdbcTableConstraint extends AbstractDomainObject {
+public class JdbcTableConstraint extends Constraint {
     private final JdbcTable table;
 
     public JdbcTableConstraint(JdbcTable table, String name) {
