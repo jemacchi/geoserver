@@ -1,25 +1,44 @@
 package org.geoserver.appschema.smart;
 
-import org.geoserver.appschema.smart.utils.Node;
-import org.geoserver.domainmodel.AbstractDomainObject;
-import org.geoserver.domainmodel.DomainMetadataStore;
-import org.geoserver.domainmodel.DomainModel;
-import org.geoserver.domainmodel.DomainModelParameters;
+import java.util.Iterator;
+import java.util.List;
+import org.geoserver.domain.model.Attribute;
+import org.geoserver.domain.model.DataStoreMetadata;
+import org.geoserver.domain.model.Entity;
+import org.geoserver.domain.model.Relation;
 
 public class DomainModelBuilder {
-	
-	public DomainMetadataStore getDomainMetadataStore(DomainModelParameters parameters) {
-		DomainModelFactory factory = new DomainModelFactory();
-		DomainModel dm = factory.getDomainModel(parameters);
-		return dm;
-	}
-	
-	public Node<AbstractDomainObject> buildTreeFrom(DomainModel domain, AbstractDomainObject root) {
-		return null;
-	}
-	
-	public Node<AbstractDomainObject> buildTreeFrom(DomainModel domain) {
-		return null;
-	}
 
+    private DataStoreMetadata dataStoreMetadata;
+
+    public DomainModelBuilder(DataStoreMetadata ds) {
+        this.dataStoreMetadata = ds;
+    }
+
+    public DataStoreMetadata getDataStoreMetadata() {
+        return dataStoreMetadata;
+    }
+
+    public Entity getEntity(String name) {
+        Iterator<Entity> iEntities = dataStoreMetadata.getEntities().iterator();
+        while (iEntities.hasNext()) {
+            Entity e = iEntities.next();
+            if (e.getName().equals(name)) return e;
+        }
+        return null;
+    }
+
+    public Relation getRelation(String name) {
+        Iterator<Relation> iRelations = dataStoreMetadata.getRelations().iterator();
+        while (iRelations.hasNext()) {
+            Relation r = iRelations.next();
+            if (r.getName().equals(name)) return r;
+        }
+        return null;
+    }
+
+    public List<Attribute> getAttributes(String entityName) {
+        Entity e = this.getEntity(entityName);
+        return e.getAttributes();
+    }
 }

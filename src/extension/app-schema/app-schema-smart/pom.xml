@@ -112,6 +112,12 @@
             <groupId>org.geotools</groupId>
             <artifactId>gt-jdbc</artifactId>
             <version>${gt.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.geotools</groupId>
+            <artifactId>gt-jdbc</artifactId>
+            <version>${gt.version}</version>
         </dependency>
         <dependency>
             <groupId>org.geotools.jdbc</groupId>
@@ -197,5 +203,5 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
+    
 </project>

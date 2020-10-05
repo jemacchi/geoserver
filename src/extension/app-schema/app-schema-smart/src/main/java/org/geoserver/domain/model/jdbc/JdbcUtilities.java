@@ -1,0 +1,532 @@
+package org.geoserver.domain.model.jdbc;
+
+import com.google.common.collect.SortedSetMultimap;
+import com.google.common.collect.TreeMultimap;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
+import org.geoserver.domain.model.Attribute;
+import org.geoserver.domain.model.Entity;
+import org.geoserver.domain.model.Relation.Cardinality;
+import org.geoserver.domain.model.jdbc.constraint.JdbcForeignKeyConstraint;
+import org.geoserver.domain.model.jdbc.constraint.JdbcIndexConstraint;
+import org.geoserver.domain.model.jdbc.constraint.JdbcPrimaryKeyConstraint;
+import org.geoserver.domain.model.jdbc.result.ResultColumn;
+import org.geoserver.domain.model.jdbc.result.ResultForeignKey;
+import org.geoserver.domain.model.jdbc.result.ResultIndex;
+import org.geoserver.domain.model.jdbc.result.ResultPrimaryKey;
+import org.geotools.jdbc.JDBCDataStore;
+
+/**
+ * JDBC utilities singleton class. It encapsulates a Geotools JDBCDataStore instance in order to use
+ * some useful methods and extends functionallities based on JDBC API use, required for
+ * AppSchemaSmart implementation.
+ */
+public class JdbcUtilities {
+
+    private static JdbcUtilities single_instance = null;
+
+    private JDBCDataStore jdbcDataStore;
+
+    private JdbcUtilities() {
+        jdbcDataStore = new JDBCDataStore();
+    }
+
+    public static JdbcUtilities getInstance() {
+        if (single_instance == null) single_instance = new JdbcUtilities();
+        return single_instance;
+    }
+
+    private static List<JdbcTable> getListOfTablesFromResultSet(
+            DatabaseMetaData metaData, ResultSet tables) throws Exception {
+        if (tables != null) {
+            List<JdbcTable> tableList = new ArrayList<JdbcTable>();
+            while (tables.next()) {
+                if (tables.getString("TABLE_TYPE") != null
+                        && tables.getString("TABLE_TYPE").equals("TABLE")) {
+                    tableList.add(
+                            new JdbcTable(
+                                    metaData.getConnection(),
+                                    tables.getString("TABLE_CAT"),
+                                    tables.getString("TABLE_SCHEM"),
+                                    tables.getString("TABLE_NAME")));
+                }
+            }
+            return tableList;
+        }
+        return null;
+    }
+
+    public List<JdbcTable> getSchemaTables(DatabaseMetaData metaData, String schema)
+            throws Exception {
+        ResultSet tables =
+                metaData.getTables(
+                        null, jdbcDataStore.escapeNamePattern(metaData, schema), "%", null);
+        return getListOfTablesFromResultSet(metaData, tables);
+    }
+
+    public List<JdbcTable> getTables(DatabaseMetaData metaData) throws Exception {
+        ResultSet tables = metaData.getTables(null, null, "%", null);
+        return getListOfTablesFromResultSet(metaData, tables);
+    }
+
+    public SortedMap<Entity, JdbcPrimaryKeyConstraint> getPrimaryKeyColumns(
+            DatabaseMetaData metaData, List<JdbcTable> tables) throws Exception {
+        if (tables != null) {
+            SortedMap<Entity, JdbcPrimaryKeyConstraint> pkMap =
+                    new TreeMap<Entity, JdbcPrimaryKeyConstraint>();
+            for (Entity table : tables) {
+                JdbcPrimaryKeyConstraint primaryKey =
+                        getPrimaryKeyColumnsByTable(metaData, (JdbcTable) table);
+                if (primaryKey != null) {
+                    pkMap.put(table, primaryKey);
+                }
+            }
+            return pkMap;
+        }
+        return null;
+    }
+
+    public SortedMap<JdbcTable, List<Attribute>> getColumns(
+            DatabaseMetaData metaData, List<JdbcTable> tables) throws Exception {
+        if (tables != null) {
+            SortedMap<JdbcTable, List<Attribute>> cMap = new TreeMap<JdbcTable, List<Attribute>>();
+            for (JdbcTable table : tables) {
+                List<Attribute> columnList = getColumnsByTable(metaData, table);
+                if (columnList != null) {
+                    cMap.put(table, columnList);
+                }
+            }
+            return cMap;
+        }
+        return null;
+    }
+
+    public JdbcPrimaryKeyConstraint getPrimaryKeyColumnsByTable(
+            DatabaseMetaData metaData, JdbcTable table) throws Exception {
+        ResultSet primaryKeyColumns =
+                (table != null)
+                        ? metaData.getPrimaryKeys(
+                                table.getCatalog(), table.getSchema(), table.getName())
+                        : null;
+        if (primaryKeyColumns != null && primaryKeyColumns.next()) {
+            JdbcTable pkTable =
+                    new JdbcTable(
+                            metaData.getConnection(),
+                            primaryKeyColumns.getString("TABLE_CAT"),
+                            primaryKeyColumns.getString("TABLE_SCHEM"),
+                            primaryKeyColumns.getString("TABLE_NAME"));
+            String pkConstraintName = primaryKeyColumns.getString("PK_NAME");
+            List<String> pkColumnNames = new ArrayList<String>();
+            do {
+                pkColumnNames.add(primaryKeyColumns.getString("COLUMN_NAME"));
+            } while (primaryKeyColumns.next());
+            JdbcPrimaryKeyConstraint primaryKey =
+                    new JdbcPrimaryKeyConstraint(pkTable, pkConstraintName, pkColumnNames);
+            return primaryKey;
+        }
+        return null;
+    }
+
+    public List<Attribute> getColumnsByTable(DatabaseMetaData metaData, JdbcTable table)
+            throws Exception {
+        ResultSet columns =
+                (table != null)
+                        ? metaData.getColumns(
+                                table.getCatalog(), table.getSchema(), table.getName(), "%")
+                        : null;
+        if (columns != null && columns.next()) {
+            JdbcTable aTable =
+                    new JdbcTable(
+                            metaData.getConnection(),
+                            columns.getString("TABLE_CAT"),
+                            columns.getString("TABLE_SCHEM"),
+                            columns.getString("TABLE_NAME"));
+            List<Attribute> columnsList = new ArrayList<Attribute>();
+            do {
+                JdbcColumn aColumn =
+                        new JdbcColumn(
+                                aTable,
+                                columns.getString("COLUMN_NAME"),
+                                columns.getString("TYPE_NAME"));
+                columnsList.add(aColumn);
+
+            } while (columns.next());
+
+            return columnsList;
+        }
+        return null;
+    }
+
+    public Attribute getColumnFromTable(
+            DatabaseMetaData metaData, JdbcTable table, String columnName) throws Exception {
+        ResultSet columns =
+                (table != null)
+                        ? metaData.getColumns(
+                                table.getCatalog(), table.getSchema(), table.getName(), columnName)
+                        : null;
+        if (columns != null && columns.next()) {
+            JdbcTable aTable =
+                    new JdbcTable(
+                            metaData.getConnection(),
+                            columns.getString("TABLE_CAT"),
+                            columns.getString("TABLE_SCHEM"),
+                            columns.getString("TABLE_NAME"));
+            JdbcColumn aColumn =
+                    new JdbcColumn(
+                            aTable,
+                            columns.getString("COLUMN_NAME"),
+                            columns.getString("TYPE_NAME"));
+            return aColumn;
+        }
+        return null;
+    }
+
+    public SortedMap<String, Collection<String>> getIndexColumns(
+            DatabaseMetaData metaData, List<JdbcTable> tables, boolean unique, boolean approximate)
+            throws Exception {
+        if (tables != null) {
+            SortedMap<String, Collection<String>> indexMap =
+                    new TreeMap<String, Collection<String>>();
+            for (JdbcTable table : tables) {
+                SortedMap<String, Collection<String>> tableIndexMap =
+                        getIndexesByTable(metaData, table, unique, approximate);
+                if (tableIndexMap != null) {
+                    indexMap.putAll(tableIndexMap);
+                }
+            }
+            return indexMap;
+        }
+        return null;
+    }
+
+    public SortedMap<String, Collection<String>> getIndexesByTable(
+            DatabaseMetaData metaData, JdbcTable table, boolean unique, boolean approximate)
+            throws Exception {
+        ResultSet indexColumns =
+                (table != null)
+                        ? metaData.getIndexInfo(
+                                table.getCatalog(),
+                                table.getSchema(),
+                                table.getName(),
+                                unique,
+                                approximate)
+                        : null;
+        if (indexColumns != null && indexColumns.next()) {
+            SortedSetMultimap<String, String> indexMultimap = TreeMultimap.create();
+            JdbcTable tableAux =
+                    new JdbcTable(
+                            metaData.getConnection(),
+                            indexColumns.getString("TABLE_CAT"),
+                            indexColumns.getString("TABLE_SCHEM"),
+                            indexColumns.getString("TABLE_NAME"));
+            do {
+
+                String indexConstraintName = indexColumns.getString("INDEX_NAME");
+                JdbcIndexConstraint indexConstraint =
+                        new JdbcIndexConstraint(tableAux, indexConstraintName);
+                String indexColumnName = indexColumns.getString("COLUMN_NAME");
+                indexMultimap.put(indexConstraint.toString(), indexColumnName);
+            } while (indexColumns.next());
+            SortedMap indexMap = new TreeMap<String, Collection<String>>();
+            indexMap.putAll(indexMultimap.asMap());
+            return indexMap;
+        }
+        return null;
+    }
+
+    public SortedMap<JdbcForeignKeyConstraint, Collection<JdbcForeignKeyColumn>> getForeignKeys(
+            DatabaseMetaData metaData, List<JdbcTable> tables) throws Exception {
+        if (tables != null) {
+            SortedMap<JdbcForeignKeyConstraint, Collection<JdbcForeignKeyColumn>> fkMap =
+                    new TreeMap<JdbcForeignKeyConstraint, Collection<JdbcForeignKeyColumn>>();
+            for (JdbcTable table : tables) {
+                SortedMap<JdbcForeignKeyConstraint, Collection<JdbcForeignKeyColumn>> tableFKMap =
+                        getForeignKeysByTable(metaData, table);
+                if (tableFKMap != null) {
+                    fkMap.putAll(tableFKMap);
+                }
+            }
+            return fkMap;
+        }
+        return null;
+    }
+
+    public SortedMap<JdbcForeignKeyConstraint, Collection<JdbcForeignKeyColumn>>
+            getForeignKeysByTable(DatabaseMetaData metaData, JdbcTable table) throws Exception {
+        ResultSet foreignKeys =
+                (table != null)
+                        ? metaData.getImportedKeys(
+                                table.getCatalog(), table.getSchema(), table.getName())
+                        : null;
+        if (foreignKeys != null && foreignKeys.next()) {
+            SortedSetMultimap<JdbcForeignKeyConstraint, JdbcForeignKeyColumn> fkMultimap =
+                    TreeMultimap.create();
+            JdbcTable fkTable =
+                    new JdbcTable(
+                            metaData.getConnection(),
+                            foreignKeys.getString("FKTABLE_CAT"),
+                            foreignKeys.getString("FKTABLE_SCHEM"),
+                            foreignKeys.getString("FKTABLE_NAME"));
+            //  Get FKColumn from table just in order to get datatype
+            Attribute aColumn =
+                    this.getColumnFromTable(
+                            metaData, table, foreignKeys.getString("FKCOLUMN_NAME"));
+            String columnType = aColumn.getType();
+            do {
+                String fkConstraintName = foreignKeys.getString("FK_NAME");
+                JdbcTable pkTable =
+                        new JdbcTable(
+                                metaData.getConnection(),
+                                foreignKeys.getString("PKTABLE_CAT"),
+                                foreignKeys.getString("PKTABLE_SCHEM"),
+                                foreignKeys.getString("PKTABLE_NAME"));
+                JdbcForeignKeyConstraint fkConstraint =
+                        new JdbcForeignKeyConstraint(fkTable, fkConstraintName, pkTable);
+                JdbcForeignKeyColumn fkColumn =
+                        new JdbcForeignKeyColumn(
+                                fkTable,
+                                foreignKeys.getString("FKCOLUMN_NAME"),
+                                columnType,
+                                new JdbcColumn(
+                                        pkTable,
+                                        foreignKeys.getString("PKCOLUMN_NAME"),
+                                        columnType));
+                fkMultimap.put(fkConstraint, fkColumn);
+            } while (foreignKeys.next());
+            SortedMap fkMap =
+                    new TreeMap<JdbcForeignKeyConstraint, Collection<JdbcForeignKeyColumn>>();
+            fkMap.putAll(fkMultimap.asMap());
+            return fkMap;
+        }
+        return null;
+    }
+
+    public Cardinality getCardinality(JdbcTable table, JdbcForeignKeyConstraint fkConstraint)
+            throws Exception {
+        DatabaseMetaData metaData = table.getConnection().getMetaData();
+        SortedMap<JdbcForeignKeyConstraint, Collection<JdbcForeignKeyColumn>> fkMultimap =
+                JdbcUtilities.getInstance().getForeignKeysByTable(metaData, table);
+        JdbcPrimaryKeyConstraint primaryKey =
+                JdbcUtilities.getInstance().getPrimaryKeyColumnsByTable(metaData, table);
+        SortedMap<Entity, JdbcPrimaryKeyConstraint> pkMap =
+                new TreeMap<Entity, JdbcPrimaryKeyConstraint>();
+        pkMap.put(table, primaryKey);
+        SortedMap<String, Collection<String>> uniqueIndexMultimap =
+                JdbcUtilities.getInstance().getIndexesByTable(metaData, table, true, true);
+        if (fkMultimap != null) {
+            for (JdbcForeignKeyConstraint aFkConstraint : fkMultimap.keySet()) {
+                if (aFkConstraint.equals(fkConstraint)) {
+                    Collection<JdbcForeignKeyColumn> fkColumnsList = fkMultimap.get(aFkConstraint);
+                    JdbcPrimaryKeyConstraint isPrimaryKey =
+                            JdbcUtilities.getInstance()
+                                    .isPrimaryKey(aFkConstraint.getTable(), fkColumnsList, pkMap);
+                    if (isPrimaryKey != null) {
+                        return Cardinality.ONEONE;
+                    } else {
+                        String uniqueIndexConstraint =
+                                JdbcUtilities.getInstance()
+                                        .isUniqueIndex(
+                                                aFkConstraint.getTable(),
+                                                fkColumnsList,
+                                                uniqueIndexMultimap);
+                        if (uniqueIndexConstraint != null) {
+                            return Cardinality.ONEONE;
+                        } else {
+                            return Cardinality.MULTIPLEONE;
+                        }
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    public List<ResultColumn> getResultColumns(SortedMap<JdbcTable, List<Attribute>> cMap) {
+        if (cMap != null) {
+            List<ResultColumn> cList = new ArrayList<ResultColumn>();
+            for (Map.Entry<JdbcTable, List<Attribute>> cMapEntry : cMap.entrySet()) {
+                Iterator<Attribute> cIterator = cMapEntry.getValue().iterator();
+                while (cIterator.hasNext()) {
+                    ResultColumn resultC = new ResultColumn((JdbcColumn) cIterator.next());
+                    cList.add(resultC);
+                }
+            }
+            return cList;
+        }
+        return null;
+    }
+
+    public List<ResultPrimaryKey> getResultPrimaryKeys(
+            SortedMap<Entity, JdbcPrimaryKeyConstraint> pkMap) {
+        if (pkMap != null) {
+            List<ResultPrimaryKey> pkList = new ArrayList<ResultPrimaryKey>();
+            for (Map.Entry<Entity, JdbcPrimaryKeyConstraint> pkMapEntry : pkMap.entrySet()) {
+                ResultPrimaryKey resultPk = new ResultPrimaryKey(pkMapEntry.getValue());
+                pkList.add(resultPk);
+            }
+            return pkList;
+        }
+        return null;
+    }
+
+    public List<ResultForeignKey> getResultForeignKeys(
+            SortedMap<JdbcForeignKeyConstraint, Collection<JdbcForeignKeyColumn>> fkMap,
+            SortedMap<Entity, JdbcPrimaryKeyConstraint> pkMap,
+            SortedMap<String, Collection<String>> uniqueIndexMap) {
+        if (fkMap != null) {
+            List<ResultForeignKey> resultForeignKeyList = new ArrayList<ResultForeignKey>();
+            for (JdbcForeignKeyConstraint fkConstraint : fkMap.keySet()) {
+                Collection<JdbcForeignKeyColumn> fkColumnsList = fkMap.get(fkConstraint);
+
+                StringBuilder fkColumnsStr = new StringBuilder();
+                StringBuilder pkColumnsStr = new StringBuilder();
+                if (fkColumnsList != null && !fkColumnsList.isEmpty()) {
+                    for (JdbcForeignKeyColumn fkColumns : fkColumnsList) {
+                        fkColumnsStr.append(fkColumns.getName());
+                        fkColumnsStr.append(",");
+                        pkColumnsStr.append(fkColumns.getRelatedColumn().getName());
+                        pkColumnsStr.append(",");
+                    }
+                    fkColumnsStr.deleteCharAt(fkColumnsStr.length() - 1);
+                    pkColumnsStr.deleteCharAt(pkColumnsStr.length() - 1);
+                }
+
+                StringBuilder stringBuilder = new StringBuilder(fkConstraint.getTable().toString());
+                stringBuilder.append(fkColumnsStr);
+                stringBuilder.append(" -> ");
+                stringBuilder.append(fkConstraint.getRelatedTable().toString());
+                stringBuilder.append(pkColumnsStr);
+                JdbcPrimaryKeyConstraint primaryKey =
+                        isPrimaryKey(fkConstraint.getTable(), fkColumnsList, pkMap);
+                if (primaryKey != null) {
+                    resultForeignKeyList.add(
+                            new ResultForeignKey(
+                                    "1:1",
+                                    fkConstraint.getTable().toString(),
+                                    fkColumnsStr.toString(),
+                                    fkConstraint.getRelatedTable().toString(),
+                                    pkColumnsStr.toString(),
+                                    fkConstraint.getName(),
+                                    primaryKey.getName()));
+                } else {
+                    String uniqueIndexConstraint =
+                            isUniqueIndex(fkConstraint.getTable(), fkColumnsList, uniqueIndexMap);
+                    if (uniqueIndexConstraint != null) {
+                        resultForeignKeyList.add(
+                                new ResultForeignKey(
+                                        "1:1",
+                                        fkConstraint.getTable().toString(),
+                                        fkColumnsStr.toString(),
+                                        fkConstraint.getRelatedTable().toString(),
+                                        pkColumnsStr.toString(),
+                                        fkConstraint.getName(),
+                                        uniqueIndexConstraint.substring(
+                                                fkConstraint.getTable().toString().length() + 3)));
+                    } else {
+                        resultForeignKeyList.add(
+                                new ResultForeignKey(
+                                        "N:1",
+                                        fkConstraint.getTable().toString(),
+                                        fkColumnsStr.toString(),
+                                        fkConstraint.getRelatedTable().toString(),
+                                        pkColumnsStr.toString(),
+                                        fkConstraint.getName(),
+                                        null));
+                    }
+                }
+            }
+            return resultForeignKeyList;
+        }
+        return null;
+    }
+
+    public List<ResultIndex> getResultIndexes(SortedMap<String, Collection<String>> indexMap) {
+        if (indexMap != null) {
+            List<ResultIndex> resultIndexes = new ArrayList<ResultIndex>();
+            for (String indexConstraint : indexMap.keySet()) {
+                String[] indexConstraintAttributes = indexConstraint.split(" - ");
+
+                StringBuilder stringBuilder = new StringBuilder(indexConstraintAttributes[0]);
+                Collection<String> indexColumns = indexMap.get(indexConstraint);
+                if (indexColumns != null && !indexColumns.isEmpty()) {
+                    stringBuilder.append("(");
+                    for (String indexColumn : indexColumns) {
+                        stringBuilder.append(indexColumn);
+                        stringBuilder.append(",");
+                    }
+                    stringBuilder.deleteCharAt(stringBuilder.length() - 1);
+                    stringBuilder.append(")");
+                }
+                resultIndexes.add(
+                        new ResultIndex(
+                                indexConstraintAttributes[0],
+                                stringBuilder.toString(),
+                                indexConstraintAttributes[1]));
+            }
+            return resultIndexes;
+        }
+        return null;
+    }
+
+    public JdbcPrimaryKeyConstraint isPrimaryKey(
+            JdbcTable table,
+            Collection<JdbcForeignKeyColumn> fkColumnsList,
+            SortedMap<Entity, JdbcPrimaryKeyConstraint> pkMap) {
+        JdbcPrimaryKeyConstraint primaryKey = pkMap.get(table);
+        for (String columnName : primaryKey.getColumnNames()) {
+            boolean containsPkColumnName = false;
+            for (JdbcForeignKeyColumn fkColumns : fkColumnsList) {
+                if (columnName.equals(fkColumns.getName())) {
+                    containsPkColumnName = true;
+                }
+            }
+            if (!containsPkColumnName) {
+                return null;
+            }
+        }
+        return primaryKey;
+    }
+
+    public String isUniqueIndex(
+            JdbcTable table,
+            Collection<JdbcForeignKeyColumn> fkColumnsList,
+            SortedMap<String, Collection<String>> uniqueIndexMap) {
+        indexLoop:
+        for (String uniqueIndexConstraint : uniqueIndexMap.keySet()) {
+            if (uniqueIndexConstraint.startsWith(table.toString() + " - ")) {
+                Collection<String> uniqueIndexColumns = uniqueIndexMap.get(uniqueIndexConstraint);
+                for (String uniqueIndexColumn : uniqueIndexColumns) {
+                    boolean containsUniqueIndexColumn = false;
+                    for (JdbcForeignKeyColumn fkColumns : fkColumnsList) {
+                        if (uniqueIndexColumn.equals(fkColumns.getName())) {
+                            containsUniqueIndexColumn = true;
+                        }
+                    }
+                    if (!containsUniqueIndexColumn) {
+                        continue indexLoop;
+                    }
+                }
+                return uniqueIndexConstraint;
+            }
+        }
+        return null;
+    }
+
+    private <T> boolean isFilledArray(T[] array) {
+        if (array == null) {
+            for (T object : array) {
+                if (object == null) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+}
