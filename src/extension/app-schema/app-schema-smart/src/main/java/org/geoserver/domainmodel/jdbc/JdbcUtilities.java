@@ -12,6 +12,7 @@ import java.util.TreeMap;
 
 import org.geoserver.domainmodel.Attribute;
 import org.geoserver.domainmodel.Entity;
+import org.geoserver.domainmodel.Relation.Cardinality;
 import org.geoserver.domainmodel.jdbc.constraint.JdbcForeignKeyConstraint;
 import org.geoserver.domainmodel.jdbc.constraint.JdbcIndexConstraint;
 import org.geoserver.domainmodel.jdbc.constraint.JdbcPrimaryKeyConstraint;
@@ -28,7 +29,6 @@ import com.google.common.collect.TreeMultimap;
  * JDBC utilities singleton class. It encapsulates a Geotools JDBCDataStore instance in order to use some
  * useful methods and extends functionallities based on JDBC API use, required for AppSchemaSmart implementation.
  *   
- * @author jmacchi
  *
  */
 public class JdbcUtilities {
@@ -273,43 +273,35 @@ public class JdbcUtilities {
         return null;
     }
 
-    /*public SortedMap<JdbcForeignKeyConstraint, Collection<ForeignKeyColumns>>
-            getInversedForeignKeysByTable(DatabaseMetaData metaData, JdbcTable table) throws Exception {
-        ResultSet foreignKeys =
-                (table != null)
-                        ? metaData.getExportedKeys(
-                                table.getCatalog(), table.getSchema(), table.getName())
-                        : null;
-        if (foreignKeys != null && foreignKeys.next()) {
-            SortedSetMultimap<JdbcForeignKeyConstraint, ForeignKeyColumns> inversedFkMultimap =
-                    TreeMultimap.create();
-            do {
-                JdbcTable pkTable =
-                        new JdbcTable(
-                                foreignKeys.getString("PKTABLE_CAT"),
-                                foreignKeys.getString("PKTABLE_SCHEM"),
-                                foreignKeys.getString("PKTABLE_NAME"));
-                String pkConstraintName = foreignKeys.getString("PK_NAME");
-                JdbcTable fkTable =
-                        new JdbcTable(
-                                foreignKeys.getString("FKTABLE_CAT"),
-                                foreignKeys.getString("FKTABLE_SCHEM"),
-                                foreignKeys.getString("FKTABLE_NAME"));
-                JdbcForeignKeyConstraint pkConstraint =
-                        new JdbcForeignKeyConstraint(pkTable, pkConstraintName, fkTable);
-                ForeignKeyColumns fkColumns =
-                        new ForeignKeyColumns(
-                                foreignKeys.getString("PKCOLUMN_NAME"),
-                                foreignKeys.getString("FKCOLUMN_NAME"));
-                inversedFkMultimap.put(pkConstraint, fkColumns);
-            } while (foreignKeys.next());
-            SortedMap inversedFkMap =
-                    new TreeMap<JdbcForeignKeyConstraint, Collection<ForeignKeyColumns>>();
-            inversedFkMap.putAll(inversedFkMultimap.asMap());
-            return inversedFkMap;
+	public Cardinality getCardinality(JdbcTable table, JdbcForeignKeyConstraint fkConstraint) throws Exception {
+		DatabaseMetaData metaData = table.getConnection().getMetaData();
+        SortedMap<JdbcForeignKeyConstraint, Collection<JdbcForeignKeyColumn>> fkMultimap = JdbcUtilities.getInstance().getForeignKeysByTable(metaData, table);
+        JdbcPrimaryKeyConstraint primaryKey = JdbcUtilities.getInstance().getPrimaryKeyColumnsByTable(metaData, table);
+        SortedMap<Entity, JdbcPrimaryKeyConstraint> pkMap = new TreeMap<Entity, JdbcPrimaryKeyConstraint>();
+        pkMap.put(table, primaryKey);
+        SortedMap<String, Collection<String>> uniqueIndexMultimap = JdbcUtilities.getInstance().getIndexesByTable(metaData, table, true, true);	
+        if (fkMultimap != null) {
+            for (JdbcForeignKeyConstraint aFkConstraint : fkMultimap.keySet()) {
+                if (aFkConstraint.equals(fkConstraint)) {
+                	Collection<JdbcForeignKeyColumn> fkColumnsList = fkMultimap.get(aFkConstraint);
+                    JdbcPrimaryKeyConstraint isPrimaryKey = JdbcUtilities.getInstance().isPrimaryKey(aFkConstraint.getTable(), fkColumnsList, pkMap);
+                    if (isPrimaryKey != null) {
+                               return Cardinality.ONEONE;
+                    } else {
+                        String uniqueIndexConstraint =
+                        		JdbcUtilities.getInstance().isUniqueIndex(aFkConstraint.getTable(), fkColumnsList, uniqueIndexMultimap);
+                        if (uniqueIndexConstraint != null) {
+                        	return Cardinality.ONEONE;
+                        } else {
+                        	return Cardinality.MULTIPLEONE;
+                        }
+                    }
+                }
+            }
         }
-        return null;
-    }*/
+		return null;
+	}
+
     
     public List<ResultColumn> getResultColumns(SortedMap<JdbcTable, List<Attribute>> cMap) {
         if (cMap != null) {

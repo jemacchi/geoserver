@@ -1,4 +1,4 @@
-package org.geoserver.datastore.utils;
+package org.geoserver.test.onlineTest;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -9,7 +9,6 @@ import java.util.SortedMap;
 
 import org.geoserver.domainmodel.Attribute;
 import org.geoserver.domainmodel.Entity;
-import org.geoserver.domainmodel.jdbc.JdbcColumn;
 import org.geoserver.domainmodel.jdbc.JdbcForeignKeyColumn;
 import org.geoserver.domainmodel.jdbc.JdbcTable;
 import org.geoserver.domainmodel.jdbc.JdbcUtilities;

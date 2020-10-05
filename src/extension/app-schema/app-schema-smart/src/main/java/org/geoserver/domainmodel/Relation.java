@@ -8,14 +8,15 @@ abstract public class Relation extends AbstractDomainObject {
 	    MULTIPLEONE
 	}
 
-	public Relation(String name) {
+	public Relation(String name, Cardinality cardinality) {
 		super(name);
+		this.cardinality = cardinality;
 	}
 	
 	protected Attribute sourceAttribute;
 	protected Attribute destinationAttribute;
 	
-	private Cardinality cardinality;
+	protected Cardinality cardinality;
 	
 	public boolean participatesIn(Entity e) {
 		if ((sourceAttribute.getEntity().compareTo(e) == 0) || (destinationAttribute.getEntity().compareTo(e) == 0)) 
