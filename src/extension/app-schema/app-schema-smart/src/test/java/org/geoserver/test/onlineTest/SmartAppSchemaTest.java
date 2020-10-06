@@ -22,6 +22,7 @@ import org.geoserver.domain.model.jdbc.constraint.JdbcForeignKeyConstraint;
 import org.geoserver.domain.model.jdbc.constraint.JdbcPrimaryKeyConstraint;
 import org.geotools.jdbc.JDBCTestSetup;
 import org.geotools.jdbc.JDBCTestSupport;
+import org.junit.Test;
 
 public class SmartAppSchemaTest extends JDBCTestSupport {
 	
