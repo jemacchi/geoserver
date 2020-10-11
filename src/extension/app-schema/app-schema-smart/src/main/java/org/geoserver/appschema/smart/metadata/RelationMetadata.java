@@ -1,32 +1,53 @@
 package org.geoserver.appschema.smart.metadata;
 
-public final class RelationMetadata {
+import org.geoserver.appschema.smart.domain.entities.DomainRelationType;
 
-    private String sourceAttribute;
-    private String destinationAttribute;
-    private String destinationEntity;
+import com.google.common.collect.ComparisonChain;
 
-    public String getSourceAttribute() {
-        return sourceAttribute;
+/**
+ * Class that represents metadata for relations between entities on the underlying DataStore model.
+ * 
+ * @author Jose Macchi - Geosolutions
+ *
+ */
+public abstract class RelationMetadata implements Comparable<RelationMetadata> {
+
+    protected AttributeMetadata sourceAttribute;
+    protected AttributeMetadata destinationAttribute;
+    protected DomainRelationType type;
+    
+    public RelationMetadata(DomainRelationType type, AttributeMetadata source, AttributeMetadata destination) {
+        this.type = type;
+        this.sourceAttribute = source;
+        this.destinationAttribute = destination;
     }
 
-    public void setSourceAttribute(String sourceAttribute) {
-        this.sourceAttribute = sourceAttribute;
+    public boolean participatesIn(EntityMetadata e) {
+        if ((sourceAttribute.getEntity().compareTo(e) == 0)
+                || (destinationAttribute.getEntity().compareTo(e) == 0)) return true;
+        return false;
     }
 
-    public String getDestinationAttribute() {
-        return destinationAttribute;
+    public AttributeMetadata getSourceAttribute() {
+        return this.sourceAttribute;
     }
 
-    public void setDestinationAttribute(String destinationAttribute) {
-        this.destinationAttribute = destinationAttribute;
+    public AttributeMetadata getDestinationAttribute() {
+        return this.destinationAttribute;
     }
 
-    public String getDestinationEntity() {
-        return destinationEntity;
+    public DomainRelationType getRelationType() {
+        return this.type;
     }
-
-    public void setDestinationEntity(String destinationEntity) {
-        this.destinationEntity = destinationEntity;
+    
+    @Override
+    public int compareTo(RelationMetadata relation) {
+    	if (relation != null) {
+           return ComparisonChain.start().compare(this.getSourceAttribute(), relation.getSourceAttribute())
+	           .compare(this.getDestinationAttribute(), relation.getDestinationAttribute())
+	           .compare(this.getRelationType(), relation.getRelationType())
+	           .result();
+        }
+        return 1;
     }
 }

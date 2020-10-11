@@ -5,37 +5,43 @@ import org.geoserver.appschema.smart.domain.DomainModelVisitor;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class representing an entity on the Smart AppSchema model.
+ * 
+ * @author Jose Macchi - Geosolutions
+ *
+ */
 public final class DomainEntity {
 
     private String name;
     private final List<DomainAttribute> attributes = new ArrayList<>();
     private final List<DomainRelation> relations = new ArrayList<>();
 
-    String getName() {
-        return name;
+    public String getName() {
+        return this.name;
     }
-
-    void setName(String name) {
+    
+    public void setName(String name) {
         this.name = name;
     }
 
-    List<DomainAttribute> getAttributes() {
+    public List<DomainAttribute> getAttributes() {
         return attributes;
     }
 
-    List<DomainRelation> getRelations() {
+    public List<DomainRelation> getRelations() {
         return relations;
     }
 
-    void add(DomainAttribute attribute) {
+    public void add(DomainAttribute attribute) {
         attributes.add(attribute);
     }
 
-    void add(DomainRelation relation) {
+    public void add(DomainRelation relation) {
         relations.add(relation);
     }
 
-    void accept(DomainModelVisitor visitor) {
+    public void accept(DomainModelVisitor visitor) {
         attributes.forEach(visitor::visit);
         relations.forEach(visitor::visit);
     }

@@ -1,6 +1,28 @@
 package org.geoserver.appschema.smart.metadata;
 
-public interface DataStoreMetadata {
+import java.util.List;
 
-    EntityMetadata getEntityMetadata(String name);
+/**
+ * Interface that provides access to metadata from a particular DataStore.
+ * It identifies different objects that defines the abstract model.
+ * Those are Entities, Relations and Attributes.
+ * 
+ * @author Jose Macchi - Geosolutions
+ *
+ */
+public interface DataStoreMetadata {
+	
+	public DataStoreMetadataConfig getDataStoreMetadataConfig();
+	
+	public void setDataStoreMetadataConfig(DataStoreMetadataConfig modelMetadataConfig);
+
+    public List<EntityMetadata> getDataStoreEntities();
+
+    public List<RelationMetadata> getDataStoreRelations();
+
+    public List<RelationMetadata> getEntityMetadataRelations(EntityMetadata entity);
+    
+    public EntityMetadata getEntityMetadata(String name);
+    
+    public void load() throws Exception;
 }

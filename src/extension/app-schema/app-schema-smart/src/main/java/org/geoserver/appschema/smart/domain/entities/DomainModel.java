@@ -1,19 +1,28 @@
 package org.geoserver.appschema.smart.domain.entities;
 
-import org.geoserver.appschema.smart.metadata.DataStoreMetadata;
 import org.geoserver.appschema.smart.domain.DomainModelVisitor;
+import org.geoserver.appschema.smart.metadata.DataStoreMetadata;
 
-public final class DomainModel {
+/**
+ * This class contains the information about model (entities, attributes and relations) that will be used
+ * to create the output representations in AppSchema Smart.
+ * It's defined by a DataStoreMetadata (source of objects to map) and the rootEntity of the appschema 
+ * model that will be done.
+ * 
+ * @author Jose Macchi - Geosolutions
+ *
+ */
+public class DomainModel {
 
     private final DataStoreMetadata dataStoreMetadata;
     private final DomainEntity rootEntity;
 
-    DomainModel(DataStoreMetadata dataStoreMetadata, DomainEntity rootEntity) {
+    public DomainModel(DataStoreMetadata dataStoreMetadata, DomainEntity rootEntity) {
         this.dataStoreMetadata = dataStoreMetadata;
         this.rootEntity = rootEntity;
     }
 
-    void accept(DomainModelVisitor visitor) {
+    public void accept(DomainModelVisitor visitor) {
         visitor.visit(dataStoreMetadata);
         visitor.visit(rootEntity);
     }

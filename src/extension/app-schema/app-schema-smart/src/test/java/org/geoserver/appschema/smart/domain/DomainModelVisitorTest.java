@@ -2,8 +2,11 @@ package org.geoserver.appschema.smart.domain;
 
 import org.junit.Test;
 
-import static org.junit.Assert.*;
-
+/**
+ * 
+ * @author Jose Macchi - Geosolutions
+ *
+ */
 public final class DomainModelVisitorTest {
 
     @Test

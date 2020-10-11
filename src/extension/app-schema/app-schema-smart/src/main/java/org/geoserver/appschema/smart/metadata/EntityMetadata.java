@@ -3,33 +3,41 @@ package org.geoserver.appschema.smart.metadata;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class EntityMetadata {
+/**
+ * Class that represents metadata for entities on the underlying DataStore model.
+ * 
+ * @author Jose Macchi - Geosolutions
+ *
+ */
+public abstract class EntityMetadata implements Comparable<EntityMetadata> {
+	
+	protected String name;
 
-    private String name;
-    private final List<AttributeMetadata> attributes = new ArrayList<>();
-    private final List<RelationMetadata> relations = new ArrayList<>();
+	protected List<AttributeMetadata> attributes = new ArrayList<>();
+    protected List<RelationMetadata> relations = new ArrayList<>();
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
+    public EntityMetadata(String name) {
         this.name = name;
     }
 
-    public List<AttributeMetadata> getAttributes() {
-        return attributes;
-    }
-
     public void addAttribute(AttributeMetadata attribute) {
-        attributes.add(attribute);
-    }
-
-    public List<RelationMetadata> getRelations() {
-        return relations;
+    	if (!this.attributes.contains(attribute)) {
+    		this.attributes.add(attribute);	
+    	}
     }
 
     public void addRelation(RelationMetadata relation) {
-        relations.add(relation);
+        if (!this.relations.contains(relation)) {
+        	relations.add(relation);        	
+        }
     }
+    
+    public String getName() {
+    	return name;
+    }
+
+	abstract public List<AttributeMetadata> getAttributes();
+	
+	abstract public List<RelationMetadata> getRelations();
+    
 }

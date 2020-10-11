@@ -1,5 +1,11 @@
 package org.geoserver.appschema.smart.domain.entities;
 
+/**
+ * Class representing an attribute of an entity on the Smart AppSchema model.
+ * 
+ * @author Jose Macchi - Geosolutions
+ *
+ */
 public final class DomainAttribute {
 
     private String name;

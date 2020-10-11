@@ -1,5 +1,11 @@
 package org.geoserver.appschema.smart.domain.entities;
 
+/**
+ * Class representing a relation between two entities on the Smart AppSchema model.
+ *  
+ * @author Jose Macchi - Geosolutions
+ *
+ */
 public final class DomainRelation {
 
     private DomainEntity source;
