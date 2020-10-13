@@ -1,22 +1,19 @@
 package org.geoserver.appschema.smart.metadata.jdbc;
 
+import com.google.common.base.Strings;
+import com.google.common.collect.ComparisonChain;
+import com.google.common.util.concurrent.UncheckedExecutionException;
 import java.sql.Connection;
 import java.util.List;
 import java.util.Objects;
-
 import org.geoserver.appschema.smart.metadata.AttributeMetadata;
 import org.geoserver.appschema.smart.metadata.EntityMetadata;
 import org.geoserver.appschema.smart.metadata.RelationMetadata;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.ComparisonChain;
-import com.google.common.util.concurrent.UncheckedExecutionException;
-
 /**
  * Class representing metadata for a table (EntityMetadata) in a JDBC DataStore.
- * 
- * @author Jose Macchi - Geosolutions
  *
+ * @author Jose Macchi - Geosolutions
  */
 public class JdbcTableMetadata extends EntityMetadata implements JdbcConnectable {
     private final Connection connection;
@@ -81,12 +78,11 @@ public class JdbcTableMetadata extends EntityMetadata implements JdbcConnectable
 
     @Override
     public List<AttributeMetadata> getAttributes() {
-    	try {
-    		// Lazy load in case not loaded before
+        try {
+            // Lazy load in case not loaded before
             if (attributes == null || attributes.isEmpty()) {
                 attributes =
-                        JdbcHelper.getInstance()
-                                .getColumnsByTable(connection.getMetaData(), this);
+                        JdbcHelper.getInstance().getColumnsByTable(connection.getMetaData(), this);
             }
             return attributes;
         } catch (Exception e) {
@@ -106,16 +102,17 @@ public class JdbcTableMetadata extends EntityMetadata implements JdbcConnectable
         return connection;
     }
 
-	@Override
-	public List<RelationMetadata> getRelations() {
-		try {
+    @Override
+    public List<RelationMetadata> getRelations() {
+        try {
             if (relations == null || relations.isEmpty()) {
-                relations = 
-                		JdbcHelper.getInstance().getRelationsByTable(connection.getMetaData(), this);
+                relations =
+                        JdbcHelper.getInstance()
+                                .getRelationsByTable(connection.getMetaData(), this);
             }
             return relations;
         } catch (Exception e) {
             throw new UncheckedExecutionException("Cannot get relations from DatabaseMetadata", e);
         }
-	}
+    }
 }

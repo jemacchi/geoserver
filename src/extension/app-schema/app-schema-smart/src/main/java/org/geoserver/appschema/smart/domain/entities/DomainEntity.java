@@ -1,15 +1,13 @@
 package org.geoserver.appschema.smart.domain.entities;
 
-import org.geoserver.appschema.smart.domain.DomainModelVisitor;
-
 import java.util.ArrayList;
 import java.util.List;
+import org.geoserver.appschema.smart.domain.DomainModelVisitor;
 
 /**
  * Class representing an entity on the Smart AppSchema model.
- * 
- * @author Jose Macchi - Geosolutions
  *
+ * @author Jose Macchi - Geosolutions
  */
 public final class DomainEntity {
 
@@ -20,7 +18,7 @@ public final class DomainEntity {
     public String getName() {
         return this.name;
     }
-    
+
     public void setName(String name) {
         this.name = name;
     }

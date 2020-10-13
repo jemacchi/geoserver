@@ -1,26 +1,24 @@
 package org.geoserver.appschema.smart.metadata.jdbc;
 
+import com.google.common.collect.ComparisonChain;
 import java.sql.Connection;
-
 import org.geoserver.appschema.smart.domain.entities.DomainRelationType;
 import org.geoserver.appschema.smart.metadata.AttributeMetadata;
 import org.geoserver.appschema.smart.metadata.RelationMetadata;
 
-import com.google.common.collect.ComparisonChain;
-
 /**
- * Class representing metadata for a relation (RelationMetadata) in a JDBC DataStore.
- * Internally it wraps a JdbcForeignKeyColumnMetadata object.
- * 
- * @author Jose Macchi - Geosolutions
+ * Class representing metadata for a relation (RelationMetadata) in a JDBC DataStore. Internally it
+ * wraps a JdbcForeignKeyColumnMetadata object.
  *
+ * @author Jose Macchi - Geosolutions
  */
 public class JdbcRelationMetadata extends RelationMetadata implements JdbcConnectable {
 
-	protected String name;
+    protected String name;
     private final JdbcForeignKeyColumnMetadata jfkc;
 
-    public JdbcRelationMetadata(String name, DomainRelationType type, JdbcForeignKeyColumnMetadata fkColumn) {
+    public JdbcRelationMetadata(
+            String name, DomainRelationType type, JdbcForeignKeyColumnMetadata fkColumn) {
         super(type, fkColumn, fkColumn.getRelatedColumn());
         this.name = name;
         this.jfkc = fkColumn;
@@ -28,13 +26,14 @@ public class JdbcRelationMetadata extends RelationMetadata implements JdbcConnec
 
     @Override
     public int compareTo(RelationMetadata relation) {
-    	if (relation != null) {
-           JdbcRelationMetadata r = (JdbcRelationMetadata) relation;
-           return ComparisonChain.start().compare(this.getSourceAttribute(), r.getSourceAttribute())
-	           .compare(this.getDestinationAttribute(), r.getDestinationAttribute())
-	           .compare(this.getRelationType(), r.getRelationType())
-	           .compare(this.name, r.getName())
-	           .result();
+        if (relation != null) {
+            JdbcRelationMetadata r = (JdbcRelationMetadata) relation;
+            return ComparisonChain.start()
+                    .compare(this.getSourceAttribute(), r.getSourceAttribute())
+                    .compare(this.getDestinationAttribute(), r.getDestinationAttribute())
+                    .compare(this.getRelationType(), r.getRelationType())
+                    .compare(this.name, r.getName())
+                    .result();
         }
         return 1;
     }
@@ -71,8 +70,8 @@ public class JdbcRelationMetadata extends RelationMetadata implements JdbcConnec
     public DomainRelationType getRelationType() {
         return this.type;
     }
-    
-    public String getName( ) {
-    	return name;
+
+    public String getName() {
+        return name;
     }
 }

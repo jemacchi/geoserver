@@ -5,15 +5,14 @@ import java.util.List;
 
 /**
  * Class that represents metadata for entities on the underlying DataStore model.
- * 
- * @author Jose Macchi - Geosolutions
  *
+ * @author Jose Macchi - Geosolutions
  */
 public abstract class EntityMetadata implements Comparable<EntityMetadata> {
-	
-	protected String name;
 
-	protected List<AttributeMetadata> attributes = new ArrayList<>();
+    protected String name;
+
+    protected List<AttributeMetadata> attributes = new ArrayList<>();
     protected List<RelationMetadata> relations = new ArrayList<>();
 
     public EntityMetadata(String name) {
@@ -21,23 +20,22 @@ public abstract class EntityMetadata implements Comparable<EntityMetadata> {
     }
 
     public void addAttribute(AttributeMetadata attribute) {
-    	if (!this.attributes.contains(attribute)) {
-    		this.attributes.add(attribute);	
-    	}
+        if (!this.attributes.contains(attribute)) {
+            this.attributes.add(attribute);
+        }
     }
 
     public void addRelation(RelationMetadata relation) {
         if (!this.relations.contains(relation)) {
-        	relations.add(relation);        	
+            relations.add(relation);
         }
     }
-    
+
     public String getName() {
-    	return name;
+        return name;
     }
 
-	abstract public List<AttributeMetadata> getAttributes();
-	
-	abstract public List<RelationMetadata> getRelations();
-    
+    public abstract List<AttributeMetadata> getAttributes();
+
+    public abstract List<RelationMetadata> getRelations();
 }

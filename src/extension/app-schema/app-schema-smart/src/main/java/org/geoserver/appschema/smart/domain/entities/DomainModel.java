@@ -4,13 +4,11 @@ import org.geoserver.appschema.smart.domain.DomainModelVisitor;
 import org.geoserver.appschema.smart.metadata.DataStoreMetadata;
 
 /**
- * This class contains the information about model (entities, attributes and relations) that will be used
- * to create the output representations in AppSchema Smart.
- * It's defined by a DataStoreMetadata (source of objects to map) and the rootEntity of the appschema 
- * model that will be done.
- * 
- * @author Jose Macchi - Geosolutions
+ * This class contains the information about model (entities, attributes and relations) that will be
+ * used to create the output representations in AppSchema Smart. It's defined by a DataStoreMetadata
+ * (source of objects to map) and the rootEntity of the appschema model that will be done.
  *
+ * @author Jose Macchi - Geosolutions
  */
 public class DomainModel {
 

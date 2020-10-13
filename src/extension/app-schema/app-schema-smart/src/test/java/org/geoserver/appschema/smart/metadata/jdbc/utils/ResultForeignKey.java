@@ -1,11 +1,10 @@
 package org.geoserver.appschema.smart.metadata.jdbc.utils;
 
 /**
- * Helper for testing purposes.
- * Represent foreign keys results extracted from JDBC dataStores (metadata access using JdbcHelper).
- * 
- * @author Jose Macchi - Geosolutions
+ * Helper for testing purposes. Represent foreign keys results extracted from JDBC dataStores
+ * (metadata access using JdbcHelper).
  *
+ * @author Jose Macchi - Geosolutions
  */
 public class ResultForeignKey {
     private final String cardinality;

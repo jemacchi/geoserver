@@ -4,10 +4,10 @@ import org.geoserver.appschema.smart.metadata.jdbc.JdbcDataStoreMetadata;
 import org.geoserver.appschema.smart.metadata.jdbc.JdbcDataStoreMetadataConfig;
 
 /**
- * Factory class that builds a DataStoreMetadata based on the DataStoreMetadataConfig passed as argument.
- * 
- * @author Jose Macchi - Geosolutions
+ * Factory class that builds a DataStoreMetadata based on the DataStoreMetadataConfig passed as
+ * argument.
  *
+ * @author Jose Macchi - Geosolutions
  */
 public class DataStoreMetadataFactory {
 
@@ -16,7 +16,7 @@ public class DataStoreMetadataFactory {
             JdbcDataStoreMetadataConfig jdmp = (JdbcDataStoreMetadataConfig) config;
             DataStoreMetadata store = new JdbcDataStoreMetadata(jdmp);
             store.load();
-            return store ;
+            return store;
         }
         return null;
     }

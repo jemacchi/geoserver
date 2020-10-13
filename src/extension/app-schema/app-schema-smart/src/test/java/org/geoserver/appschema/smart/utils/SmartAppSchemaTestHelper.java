@@ -1,9 +1,13 @@
 package org.geoserver.appschema.smart.utils;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
@@ -15,7 +19,6 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
@@ -24,7 +27,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-
 import org.geoserver.appschema.smart.domain.DomainModelVisitor;
 import org.geoserver.appschema.smart.domain.entities.DomainModel;
 import org.geoserver.appschema.smart.metadata.AttributeMetadata;
@@ -43,86 +45,86 @@ import org.geotools.util.logging.Logging;
 import org.w3c.dom.Document;
 
 /**
- * Smart AppSchema Helper for testing purposes. 
- * 
- * @author Jose Macchi - Geosolutions
+ * Smart AppSchema Helper for testing purposes.
  *
+ * @author Jose Macchi - Geosolutions
  */
 public class SmartAppSchemaTestHelper {
 
-	private static final Logger LOGGER = Logging.getLogger(SmartAppSchemaTestHelper.class);
-	
-	public static DatabaseMetaData getConnectionMetaData(String url, String user, String pass) throws Exception {
+    private static final Logger LOGGER = Logging.getLogger(SmartAppSchemaTestHelper.class);
+
+    public static DatabaseMetaData getConnectionMetaData(String url, String user, String pass)
+            throws Exception {
         Connection connection = DriverManager.getConnection(url, user, pass);
         if (connection != null) {
             return connection.getMetaData();
         }
         return null;
     }
-	
-	public static <T> void printDomainModel(DomainModel dm) {
-		DomainModelVisitor dmv = new LoggerDomainModelVisitor();
+
+    public static <T> void printDomainModel(DomainModel dm) {
+        DomainModelVisitor dmv = new LoggerDomainModelVisitor();
         if (dm != null) {
-        	dm.accept(dmv);
+            dm.accept(dmv);
         }
     }
-	
-	public static <T> void printObjectsFromList(List<T> list) {
+
+    public static <T> void printObjectsFromList(List<T> list) {
         if (list != null) {
             for (T object : list) {
-            	LOGGER.log(Level.INFO, object.toString());
+                LOGGER.log(Level.INFO, object.toString());
             }
         }
     }
-    
-	public static void printPrimaryKeys(SortedMap<EntityMetadata, JdbcPrimaryKeyConstraintMetadata>  pkMap) {
+
+    public static void printPrimaryKeys(
+            SortedMap<EntityMetadata, JdbcPrimaryKeyConstraintMetadata> pkMap) {
         List<ResultPrimaryKey> pkList = getResultPrimaryKeys(pkMap);
-        if(pkList != null)
-        {
-            for(ResultPrimaryKey pk : pkList)
-            {
-            	LOGGER.log(Level.INFO, pk.toString());
+        if (pkList != null) {
+            for (ResultPrimaryKey pk : pkList) {
+                LOGGER.log(Level.INFO, pk.toString());
             }
         }
     }
-    
-	public static void printColumns(SortedMap<JdbcTableMetadata, List<AttributeMetadata>>  cMap) {
+
+    public static void printColumns(SortedMap<JdbcTableMetadata, List<AttributeMetadata>> cMap) {
         List<ResultColumn> cList = getResultColumns(cMap);
-        if(cList != null)
-        {
-            for(ResultColumn c : cList)
-            {
-            	LOGGER.log(Level.INFO, c.toString());
+        if (cList != null) {
+            for (ResultColumn c : cList) {
+                LOGGER.log(Level.INFO, c.toString());
             }
         }
     }
-    
-	public static void printForeignKeys(SortedMap<JdbcForeignKeyConstraintMetadata, Collection<JdbcForeignKeyColumnMetadata>> fkMap, SortedMap<EntityMetadata, JdbcPrimaryKeyConstraintMetadata> pkMap, SortedMap<String, Collection<String>> uniqueIndexMap) {
-        List<ResultForeignKey> resultForeignKeyList = getResultForeignKeys(fkMap, pkMap, uniqueIndexMap);
-        if(resultForeignKeyList != null)
-        {
-            for(ResultForeignKey resultForeignKey : resultForeignKeyList)
-            {
-            	LOGGER.log(Level.INFO, resultForeignKey.toString());
+
+    public static void printForeignKeys(
+            SortedMap<JdbcForeignKeyConstraintMetadata, Collection<JdbcForeignKeyColumnMetadata>>
+                    fkMap,
+            SortedMap<EntityMetadata, JdbcPrimaryKeyConstraintMetadata> pkMap,
+            SortedMap<String, Collection<String>> uniqueIndexMap) {
+        List<ResultForeignKey> resultForeignKeyList =
+                getResultForeignKeys(fkMap, pkMap, uniqueIndexMap);
+        if (resultForeignKeyList != null) {
+            for (ResultForeignKey resultForeignKey : resultForeignKeyList) {
+                LOGGER.log(Level.INFO, resultForeignKey.toString());
             }
         }
     }
-    
-	public static void printIndexes(SortedMap<String, Collection<String>> indexMap) {
+
+    public static void printIndexes(SortedMap<String, Collection<String>> indexMap) {
         List<ResultIndex> resultIndices = getResultIndexes(indexMap);
-        if(resultIndices != null)
-        {
-            for(ResultIndex resultIndex : resultIndices)
-            {
-            	LOGGER.log(Level.INFO, resultIndex.toString());
+        if (resultIndices != null) {
+            for (ResultIndex resultIndex : resultIndices) {
+                LOGGER.log(Level.INFO, resultIndex.toString());
             }
         }
     }
-	
-	private static List<ResultColumn> getResultColumns(SortedMap<JdbcTableMetadata, List<AttributeMetadata>> cMap) {
+
+    private static List<ResultColumn> getResultColumns(
+            SortedMap<JdbcTableMetadata, List<AttributeMetadata>> cMap) {
         if (cMap != null) {
             List<ResultColumn> cList = new ArrayList<ResultColumn>();
-            for (Map.Entry<JdbcTableMetadata, List<AttributeMetadata>> cMapEntry : cMap.entrySet()) {
+            for (Map.Entry<JdbcTableMetadata, List<AttributeMetadata>> cMapEntry :
+                    cMap.entrySet()) {
                 Iterator<AttributeMetadata> cIterator = cMapEntry.getValue().iterator();
                 while (cIterator.hasNext()) {
                     ResultColumn resultC = new ResultColumn((JdbcColumnMetadata) cIterator.next());
@@ -138,7 +140,8 @@ public class SmartAppSchemaTestHelper {
             SortedMap<EntityMetadata, JdbcPrimaryKeyConstraintMetadata> pkMap) {
         if (pkMap != null) {
             List<ResultPrimaryKey> pkList = new ArrayList<ResultPrimaryKey>();
-            for (Map.Entry<EntityMetadata, JdbcPrimaryKeyConstraintMetadata> pkMapEntry : pkMap.entrySet()) {
+            for (Map.Entry<EntityMetadata, JdbcPrimaryKeyConstraintMetadata> pkMapEntry :
+                    pkMap.entrySet()) {
                 ResultPrimaryKey resultPk = new ResultPrimaryKey(pkMapEntry.getValue());
                 pkList.add(resultPk);
             }
@@ -148,7 +151,8 @@ public class SmartAppSchemaTestHelper {
     }
 
     private static List<ResultForeignKey> getResultForeignKeys(
-            SortedMap<JdbcForeignKeyConstraintMetadata, Collection<JdbcForeignKeyColumnMetadata>> fkMap,
+            SortedMap<JdbcForeignKeyConstraintMetadata, Collection<JdbcForeignKeyColumnMetadata>>
+                    fkMap,
             SortedMap<EntityMetadata, JdbcPrimaryKeyConstraintMetadata> pkMap,
             SortedMap<String, Collection<String>> uniqueIndexMap) {
         if (fkMap != null) {
@@ -174,7 +178,9 @@ public class SmartAppSchemaTestHelper {
                 stringBuilder.append(" -> ");
                 stringBuilder.append(fkConstraint.getRelatedTable().toString());
                 stringBuilder.append(pkColumnsStr);
-                JdbcPrimaryKeyConstraintMetadata primaryKey = JdbcHelper.getInstance().isPrimaryKey(fkConstraint.getTable(), fkColumnsList, pkMap);
+                JdbcPrimaryKeyConstraintMetadata primaryKey =
+                        JdbcHelper.getInstance()
+                                .isPrimaryKey(fkConstraint.getTable(), fkColumnsList, pkMap);
                 if (primaryKey != null) {
                     resultForeignKeyList.add(
                             new ResultForeignKey(
@@ -186,7 +192,10 @@ public class SmartAppSchemaTestHelper {
                                     fkConstraint.getName(),
                                     primaryKey.getName()));
                 } else {
-                    String uniqueIndexConstraint = JdbcHelper.getInstance().isUniqueIndex(fkConstraint.getTable(), fkColumnsList, uniqueIndexMap);
+                    String uniqueIndexConstraint =
+                            JdbcHelper.getInstance()
+                                    .isUniqueIndex(
+                                            fkConstraint.getTable(), fkColumnsList, uniqueIndexMap);
                     if (uniqueIndexConstraint != null) {
                         resultForeignKeyList.add(
                                 new ResultForeignKey(
@@ -216,7 +225,8 @@ public class SmartAppSchemaTestHelper {
         return null;
     }
 
-    private static List<ResultIndex> getResultIndexes(SortedMap<String, Collection<String>> indexMap) {
+    private static List<ResultIndex> getResultIndexes(
+            SortedMap<String, Collection<String>> indexMap) {
         if (indexMap != null) {
             List<ResultIndex> resultIndexes = new ArrayList<ResultIndex>();
             for (String indexConstraint : indexMap.keySet()) {
@@ -243,8 +253,9 @@ public class SmartAppSchemaTestHelper {
         }
         return null;
     }
-    
-    public static void printDocument(Document doc, OutputStream out) throws IOException, TransformerException {
+
+    public static void printDocument(Document doc, OutputStream out)
+            throws IOException, TransformerException {
         TransformerFactory tf = TransformerFactory.newInstance();
         Transformer transformer = tf.newTransformer();
         transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
@@ -253,26 +264,52 @@ public class SmartAppSchemaTestHelper {
         transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
         transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
 
-        transformer.transform(new DOMSource(doc), 
-             new StreamResult(new OutputStreamWriter(out, "UTF-8")));
+        transformer.transform(
+                new DOMSource(doc), new StreamResult(new OutputStreamWriter(out, "UTF-8")));
     }
-    
+
     public static void saveDocumentToFile(Document doc, String pathname)
-			throws TransformerFactoryConfigurationError, TransformerConfigurationException, TransformerException {
-		TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            throws TransformerFactoryConfigurationError, TransformerConfigurationException,
+                    TransformerException {
+        TransformerFactory transformerFactory = TransformerFactory.newInstance();
         Transformer transf = transformerFactory.newTransformer();
-        
+
         transf.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
         transf.setOutputProperty(OutputKeys.INDENT, "yes");
         transf.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
-        
+
         DOMSource source = new DOMSource(doc);
 
         File myFile = new File(pathname);
-        
+
         StreamResult file = new StreamResult(myFile);
 
         transf.transform(source, file);
-	}
+    }
     
+    public static InputStream getFileFromResourceAsStream(String fileName) {
+        ClassLoader classLoader = SmartAppSchemaTestHelper.class.getClassLoader();
+        InputStream inputStream = classLoader.getResourceAsStream(fileName);
+        if (inputStream == null) {
+            throw new IllegalArgumentException("file not found! " + fileName);
+        } else {
+            return inputStream;
+        }
+
+    }
+    
+    public static void printInputStream(InputStream is) {
+        try (InputStreamReader streamReader =
+                    new InputStreamReader(is, StandardCharsets.UTF_8);
+             BufferedReader reader = new BufferedReader(streamReader)) {
+
+            String line;
+            while ((line = reader.readLine()) != null) {
+                System.out.println(line);
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

@@ -2,14 +2,12 @@ package org.geoserver.appschema.smart.metadata.jdbc;
 
 import java.sql.Connection;
 import java.util.Objects;
-
 import org.geoserver.appschema.smart.metadata.AttributeMetadata;
 
 /**
  * Class representing metadata for a column (entity's attribute) in a JDBC DataStore.
  *
  * @author Jose Macchi - Geosolutions
- *
  */
 public class JdbcColumnMetadata extends AttributeMetadata implements JdbcConnectable {
 

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?><xs:schema xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:xs="http://www.w3.org/2001/XMLSchema" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="" version="1.0" xmlns:st="">
+  <xs:import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <xs:element name="meteo_stations" substitutionGroup="gml:AbstractFeature" type="st:meteo_stationsType"/>
+  <xs:complexType name="meteo_stationsType">
+    <xs:complexContent>
+      <xs:extension base="gml:AbstractFeatureType">
+        <xs:sequence>
+          <xs:element maxOccurs="1" minOccurs="1" name="id" type="xs:double"/>
+          <xs:element maxOccurs="1" minOccurs="1" name="code" type="xs:string"/>
+          <xs:element maxOccurs="1" minOccurs="1" name="common_name" type="xs:string"/>
+          <xs:element maxOccurs="1" minOccurs="0" name="position" type="gml:GeometryPropertyType"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+</xs:schema>

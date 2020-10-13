@@ -4,15 +4,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-
 import org.geoserver.appschema.smart.metadata.jdbc.JdbcTableMetadata;
 
 /**
- * Class representing metadata for a constraint type primarykey in a JDBC DataStore.
- * A primary key can be composed by more than one column.
- *  
- * @author Jose Macchi - Geosolutions
+ * Class representing metadata for a constraint type primarykey in a JDBC DataStore. A primary key
+ * can be composed by more than one column.
  *
+ * @author Jose Macchi - Geosolutions
  */
 public class JdbcPrimaryKeyConstraintMetadata extends JdbcTableConstraintMetadata {
     private final List<String> columnNames;
@@ -54,7 +52,6 @@ public class JdbcPrimaryKeyConstraintMetadata extends JdbcTableConstraintMetadat
     public int hashCode() {
         return Objects.hash(this.getTable(), this.getName());
     }
-
 
     public List<String> getColumnNames() {
         return columnNames;

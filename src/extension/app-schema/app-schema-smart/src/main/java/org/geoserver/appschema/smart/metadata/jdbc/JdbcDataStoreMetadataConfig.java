@@ -1,14 +1,13 @@
 package org.geoserver.appschema.smart.metadata.jdbc;
 
 import java.sql.Connection;
-
 import org.geoserver.appschema.smart.metadata.DataStoreMetadataConfig;
 
 /**
- * Configuration class that keeps specific information related to DataStoreMetadata for JDBCs connections.
- * 
- * @author Jose Macchi - Geosolutions
+ * Configuration class that keeps specific information related to DataStoreMetadata for JDBCs
+ * connections.
  *
+ * @author Jose Macchi - Geosolutions
  */
 public class JdbcDataStoreMetadataConfig extends DataStoreMetadataConfig {
 
@@ -41,10 +40,10 @@ public class JdbcDataStoreMetadataConfig extends DataStoreMetadataConfig {
     public String getType() {
         return JdbcDataStoreMetadataConfig.TYPE;
     }
-    
+
     @Override
     public String toString() {
-    	StringBuilder stringBuilder = new StringBuilder("Type: ");
+        StringBuilder stringBuilder = new StringBuilder("Type: ");
         stringBuilder.append(this.getType());
         stringBuilder.append(" - Connection: ");
         stringBuilder.append(this.connection.toString());
@@ -54,5 +53,4 @@ public class JdbcDataStoreMetadataConfig extends DataStoreMetadataConfig {
         stringBuilder.append(this.getSchema());
         return stringBuilder.toString();
     }
-    
 }

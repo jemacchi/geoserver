@@ -1,14 +1,12 @@
 package org.geoserver.appschema.smart.metadata.jdbc.constraint;
 
 import java.util.Objects;
-
 import org.geoserver.appschema.smart.metadata.jdbc.JdbcTableMetadata;
 
 /**
  * Class representing metadata for a constraint type index in a JDBC DataStore.
- *  
- * @author Jose Macchi - Geosolutions
  *
+ * @author Jose Macchi - Geosolutions
  */
 public class JdbcIndexConstraintMetadata extends JdbcTableConstraintMetadata {
 

@@ -6,15 +6,13 @@ import org.geotools.jdbc.JDBCTestSetup;
 
 /**
  * Implementation of JDBCTestSetup for SmartAppSchema.
- * 
- * @author Jose Macchi - Geosolutions
  *
+ * @author Jose Macchi - Geosolutions
  */
 public class SmartAppSchemaJdbcTestSetup extends JDBCTestSetup {
 
-	@Override
-	protected JDBCDataStoreFactory createDataStoreFactory() {
-		return new PostgisNGDataStoreFactory();
-	}
-
+    @Override
+    protected JDBCDataStoreFactory createDataStoreFactory() {
+        return new PostgisNGDataStoreFactory();
+    }
 }

@@ -4,18 +4,17 @@ import com.google.common.collect.ComparisonChain;
 
 /**
  * Class that represents metadata for entities' attributes on the underlying DataStore model.
- *  
- * @author Jose Macchi - Geosolutions
  *
+ * @author Jose Macchi - Geosolutions
  */
 public abstract class AttributeMetadata implements Comparable<AttributeMetadata> {
 
-	protected String name;
-	protected EntityMetadata entity;
-	protected String type;
+    protected String name;
+    protected EntityMetadata entity;
+    protected String type;
 
     public AttributeMetadata(EntityMetadata entity, String name, String type) {
-    	this.name = name;
+        this.name = name;
         this.entity = entity;
         this.setType(type);
     }
@@ -31,11 +30,11 @@ public abstract class AttributeMetadata implements Comparable<AttributeMetadata>
     public EntityMetadata getEntity() {
         return entity;
     }
-    
+
     public String getName() {
-    	return name;
+        return name;
     }
-    
+
     @Override
     public int compareTo(AttributeMetadata attributeMetadata) {
         if (attributeMetadata != null) {
@@ -46,5 +45,4 @@ public abstract class AttributeMetadata implements Comparable<AttributeMetadata>
         }
         return 1;
     }
-
 }

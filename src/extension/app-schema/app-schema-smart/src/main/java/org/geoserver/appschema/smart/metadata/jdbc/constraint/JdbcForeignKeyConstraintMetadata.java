@@ -1,19 +1,18 @@
 package org.geoserver.appschema.smart.metadata.jdbc.constraint;
 
 import java.util.Objects;
-
 import org.geoserver.appschema.smart.metadata.jdbc.JdbcTableMetadata;
 
 /**
  * Class representing metadata for a constraint type foreignkey in a JDBC DataStore.
- * 
- * @author Jose Macchi - Geosolutions
  *
+ * @author Jose Macchi - Geosolutions
  */
 public class JdbcForeignKeyConstraintMetadata extends JdbcTableConstraintMetadata {
     private final JdbcTableMetadata relatedTable;
 
-    public JdbcForeignKeyConstraintMetadata(JdbcTableMetadata table, String name, JdbcTableMetadata relatedTable) {
+    public JdbcForeignKeyConstraintMetadata(
+            JdbcTableMetadata table, String name, JdbcTableMetadata relatedTable) {
         super(table, name);
         this.relatedTable = relatedTable;
     }
@@ -31,7 +30,8 @@ public class JdbcForeignKeyConstraintMetadata extends JdbcTableConstraintMetadat
         if (object == null || !(object instanceof JdbcForeignKeyConstraintMetadata)) {
             return false;
         }
-        JdbcForeignKeyConstraintMetadata foreignKeyConstraint = (JdbcForeignKeyConstraintMetadata) object;
+        JdbcForeignKeyConstraintMetadata foreignKeyConstraint =
+                (JdbcForeignKeyConstraintMetadata) object;
         return this.compareTo(foreignKeyConstraint) == 0;
     }
 

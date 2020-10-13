@@ -3,11 +3,10 @@ package org.geoserver.appschema.smart.metadata.jdbc.utils;
 import org.geoserver.appschema.smart.metadata.jdbc.constraint.JdbcPrimaryKeyConstraintMetadata;
 
 /**
- * Helper for testing purposes.
- * Represent primary keys results extracted from JDBC dataStores (metadata access using JdbcHelper).
- * 
- * @author Jose Macchi - Geosolutions
+ * Helper for testing purposes. Represent primary keys results extracted from JDBC dataStores
+ * (metadata access using JdbcHelper).
  *
+ * @author Jose Macchi - Geosolutions
  */
 public class ResultPrimaryKey {
     private final String table;

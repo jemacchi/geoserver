@@ -1,11 +1,10 @@
 package org.geoserver.appschema.smart.metadata.jdbc.utils;
 
 /**
- * Helper for testing purposes.
- * Represent indexes results extracted from JDBC dataStores (metadata access using JdbcHelper).
- * 
- * @author Jose Macchi - Geosolutions
+ * Helper for testing purposes. Represent indexes results extracted from JDBC dataStores (metadata
+ * access using JdbcHelper).
  *
+ * @author Jose Macchi - Geosolutions
  */
 public class ResultIndex {
     private final String table;

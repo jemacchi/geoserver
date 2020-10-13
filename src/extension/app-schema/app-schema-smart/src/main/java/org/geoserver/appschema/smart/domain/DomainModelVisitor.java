@@ -7,12 +7,10 @@ import org.geoserver.appschema.smart.domain.entities.DomainRelation;
 import org.geoserver.appschema.smart.metadata.DataStoreMetadata;
 
 /**
- * Smart AppSchema model objects visitor interface.
- * Defined with the purpose of accessing elements on model and visiting them in order to build output 
- * structure data.
- * 
- * @author Jose Macchi - Geosolutions
+ * Smart AppSchema model objects visitor interface. Defined with the purpose of accessing elements
+ * on model and visiting them in order to build output structure data.
  *
+ * @author Jose Macchi - Geosolutions
  */
 public abstract class DomainModelVisitor {
 

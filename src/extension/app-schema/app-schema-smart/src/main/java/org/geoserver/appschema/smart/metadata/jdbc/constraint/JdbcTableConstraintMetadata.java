@@ -1,17 +1,15 @@
 package org.geoserver.appschema.smart.metadata.jdbc.constraint;
 
+import com.google.common.collect.ComparisonChain;
 import java.util.Objects;
-
 import org.geoserver.appschema.smart.metadata.ConstraintMetadata;
 import org.geoserver.appschema.smart.metadata.jdbc.JdbcTableMetadata;
 
-import com.google.common.collect.ComparisonChain;
-
 /**
- * Super class representing metadata for constraints related to tables (Entities) in a JDBC DataStore.
- * 
- * @author Jose Macchi - Geosolutions
+ * Super class representing metadata for constraints related to tables (Entities) in a JDBC
+ * DataStore.
  *
+ * @author Jose Macchi - Geosolutions
  */
 public class JdbcTableConstraintMetadata extends ConstraintMetadata {
     private final JdbcTableMetadata table;
