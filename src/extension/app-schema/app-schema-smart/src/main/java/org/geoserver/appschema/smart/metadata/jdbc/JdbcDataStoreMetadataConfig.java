@@ -41,4 +41,18 @@ public class JdbcDataStoreMetadataConfig extends DataStoreMetadataConfig {
     public String getType() {
         return JdbcDataStoreMetadataConfig.TYPE;
     }
+    
+    @Override
+    public String toString() {
+    	StringBuilder stringBuilder = new StringBuilder("Type: ");
+        stringBuilder.append(this.getType());
+        stringBuilder.append(" - Connection: ");
+        stringBuilder.append(this.connection.toString());
+        stringBuilder.append(" - Catalog: ");
+        stringBuilder.append(this.getCatalog());
+        stringBuilder.append(" - Schema: ");
+        stringBuilder.append(this.getSchema());
+        return stringBuilder.toString();
+    }
+    
 }

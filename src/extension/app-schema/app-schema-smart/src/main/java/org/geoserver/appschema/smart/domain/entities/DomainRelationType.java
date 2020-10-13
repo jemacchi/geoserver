@@ -8,5 +8,7 @@ package org.geoserver.appschema.smart.domain.entities;
  */
 public enum DomainRelationType {
     ONEONE,
-    MULTIPLEONE
+    ONEMANY,
+    MANYONE,
+    MANYMANY
 }

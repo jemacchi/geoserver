@@ -21,9 +21,9 @@ import org.junit.Test;
  * @author Jose Macchi - Geosolutions
  *
  */
-public class JdbcDataStoreMetadataTest extends JDBCTestSupport {
+public class JdbcDataStoreMetadataInspireTest extends JDBCTestSupport {
 	
-	private String SCHEMA = "meteo";
+	private String SCHEMA = "public";
 	
     @Override
     protected JDBCTestSetup createTestSetup() {
@@ -36,40 +36,17 @@ public class JdbcDataStoreMetadataTest extends JDBCTestSupport {
     }
     
     @Test
-    public void testJdbcDataStoreMetadataLoad() throws Exception {
-    	DatabaseMetaData metaData = this.setup.getDataSource().getConnection().getMetaData();
-    	DataStoreMetadataConfig dmc = new JdbcDataStoreMetadataConfig(metaData.getConnection(), null, SCHEMA);
-    	
-    	DataStoreMetadata dm = (new DataStoreMetadataFactory()).getDataStoreMetadata(dmc);
-   	
-    	List<EntityMetadata> entities = dm.getDataStoreEntities();
-    	SmartAppSchemaTestHelper.printObjectsFromList(entities);
-
-    	Iterator<EntityMetadata> iEntity = entities.iterator();
-    	while (iEntity.hasNext()) {
-    		EntityMetadata e = iEntity.next();
-        	List<AttributeMetadata> attributes = e.getAttributes();
-        	SmartAppSchemaTestHelper.printObjectsFromList(attributes);
-    	}
-
-    	List<RelationMetadata> relations = dm.getDataStoreRelations();
-    	SmartAppSchemaTestHelper.printObjectsFromList(relations);
-  	
-    	metaData.getConnection().close();
-    }
-   
-    @Test
-    public void testMeteoObservationsEntityAttributes() throws Exception{
+    public void testPublicIndicatorsEntityAttributes() throws Exception{
     	DatabaseMetaData metaData = this.setup.getDataSource().getConnection().getMetaData();    	
-        EntityMetadata entity = new JdbcTableMetadata(metaData.getConnection(), null, SCHEMA, "meteo_observations");
+        EntityMetadata entity = new JdbcTableMetadata(metaData.getConnection(), null, SCHEMA, "indicators");
         SmartAppSchemaTestHelper.printObjectsFromList(entity.getAttributes());
     	metaData.getConnection().close();
     }
     
     @Test
-    public void testMeteoObservationsEntityRelations() throws Exception{
+    public void testPublicIndicatorsEntityRelations() throws Exception{
     	DatabaseMetaData metaData = this.setup.getDataSource().getConnection().getMetaData();    	
-        EntityMetadata entity = new JdbcTableMetadata(metaData.getConnection(), null, SCHEMA, "meteo_observations");
+        EntityMetadata entity = new JdbcTableMetadata(metaData.getConnection(), null, SCHEMA, "indicators");
         SmartAppSchemaTestHelper.printObjectsFromList(entity.getRelations());
     	metaData.getConnection().close();
     }

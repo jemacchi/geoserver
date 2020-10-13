@@ -48,7 +48,7 @@ import org.geoserver.appschema.smart.metadata.RelationMetadata;
         	tableRelations.forEach(
                     relationMetadata -> {
                     	jTable.addRelation(relationMetadata);
-                    	relations.add(relationMetadata);
+                    	relations.add(relationMetadata);                   	
                     });
         }
     }

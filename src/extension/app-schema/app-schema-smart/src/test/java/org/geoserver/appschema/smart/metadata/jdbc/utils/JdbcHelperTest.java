@@ -18,6 +18,7 @@ import org.geoserver.appschema.smart.metadata.jdbc.JdbcTableMetadata;
 import org.geoserver.appschema.smart.metadata.jdbc.SmartAppSchemaJdbcTestSetup;
 import org.geoserver.appschema.smart.metadata.jdbc.constraint.JdbcForeignKeyConstraintMetadata;
 import org.geoserver.appschema.smart.metadata.jdbc.constraint.JdbcPrimaryKeyConstraintMetadata;
+import org.geoserver.appschema.smart.utils.SmartAppSchemaTestHelper;
 import org.geotools.jdbc.JDBCTestSetup;
 import org.geotools.jdbc.JDBCTestSupport;
 import org.geotools.util.logging.Logging;

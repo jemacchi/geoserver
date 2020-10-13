@@ -1,5 +1,9 @@
-package org.geoserver.appschema.smart.metadata.jdbc.utils;
+package org.geoserver.appschema.smart.utils;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
@@ -12,6 +16,17 @@ import java.util.SortedMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerFactoryConfigurationError;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
+import org.geoserver.appschema.smart.domain.DomainModelVisitor;
+import org.geoserver.appschema.smart.domain.entities.DomainModel;
 import org.geoserver.appschema.smart.metadata.AttributeMetadata;
 import org.geoserver.appschema.smart.metadata.EntityMetadata;
 import org.geoserver.appschema.smart.metadata.jdbc.JdbcColumnMetadata;
@@ -20,7 +35,12 @@ import org.geoserver.appschema.smart.metadata.jdbc.JdbcHelper;
 import org.geoserver.appschema.smart.metadata.jdbc.JdbcTableMetadata;
 import org.geoserver.appschema.smart.metadata.jdbc.constraint.JdbcForeignKeyConstraintMetadata;
 import org.geoserver.appschema.smart.metadata.jdbc.constraint.JdbcPrimaryKeyConstraintMetadata;
+import org.geoserver.appschema.smart.metadata.jdbc.utils.ResultColumn;
+import org.geoserver.appschema.smart.metadata.jdbc.utils.ResultForeignKey;
+import org.geoserver.appschema.smart.metadata.jdbc.utils.ResultIndex;
+import org.geoserver.appschema.smart.metadata.jdbc.utils.ResultPrimaryKey;
 import org.geotools.util.logging.Logging;
+import org.w3c.dom.Document;
 
 /**
  * Smart AppSchema Helper for testing purposes. 
@@ -38,6 +58,13 @@ public class SmartAppSchemaTestHelper {
             return connection.getMetaData();
         }
         return null;
+    }
+	
+	public static <T> void printDomainModel(DomainModel dm) {
+		DomainModelVisitor dmv = new LoggerDomainModelVisitor();
+        if (dm != null) {
+        	dm.accept(dmv);
+        }
     }
 	
 	public static <T> void printObjectsFromList(List<T> list) {
@@ -216,5 +243,36 @@ public class SmartAppSchemaTestHelper {
         }
         return null;
     }
+    
+    public static void printDocument(Document doc, OutputStream out) throws IOException, TransformerException {
+        TransformerFactory tf = TransformerFactory.newInstance();
+        Transformer transformer = tf.newTransformer();
+        transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
+        transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+        transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+        transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
+
+        transformer.transform(new DOMSource(doc), 
+             new StreamResult(new OutputStreamWriter(out, "UTF-8")));
+    }
+    
+    public static void saveDocumentToFile(Document doc, String pathname)
+			throws TransformerFactoryConfigurationError, TransformerConfigurationException, TransformerException {
+		TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        Transformer transf = transformerFactory.newTransformer();
+        
+        transf.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+        transf.setOutputProperty(OutputKeys.INDENT, "yes");
+        transf.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+        
+        DOMSource source = new DOMSource(doc);
+
+        File myFile = new File(pathname);
+        
+        StreamResult file = new StreamResult(myFile);
+
+        transf.transform(source, file);
+	}
     
 }

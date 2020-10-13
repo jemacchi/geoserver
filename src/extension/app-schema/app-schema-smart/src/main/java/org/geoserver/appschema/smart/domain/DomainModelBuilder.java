@@ -69,6 +69,10 @@ public final class DomainModelBuilder {
 	                .getRelations()
 	                .forEach(
 	                        relationMetadata -> {
+	                        	/*AttributeMetadata sourceAttributeMetadata = relationMetadata.getSourceAttribute();
+	                            DomainAttribute sourceDomainAttribute =
+	                                    buildDomainAttribute(sourceAttributeMetadata);
+	                        	*/
 	                            EntityMetadata destinationEntityMetadata = relationMetadata.getDestinationAttribute().getEntity();
 	                            DomainEntity destinationDomainEntity =
 	                                    buildDomainEntity(destinationEntityMetadata);
@@ -76,7 +80,11 @@ public final class DomainModelBuilder {
 	                            DomainRelation domainRelation = new DomainRelation();
 	                            domainRelation.setSource(domainEntity);
 	                            domainRelation.setDestination(destinationDomainEntity);
+	                            //domainRelation.setSource(sourceDomainAttribute);
+	                            //domainRelation.setDestination(destinationDomainAttribute);
+	                            domainRelation.setRelationType(relationMetadata.getRelationType());
 	                            domainEntity.add(domainRelation);
+	                            
 	                        });
 	        
 	        return domainEntity;
@@ -89,26 +97,43 @@ public final class DomainModelBuilder {
         DomainAttribute domainAttribute = new DomainAttribute();
         domainAttribute.setName(attributeMetadata.getName());
         domainAttribute.setType(DomainAttributeType.TEXT);
-        // TODO: Work in progress. Need to adjust to different Attribute types (mapping them from
-        // diverse sources into one specific DomainModal attributes types)
-        // For the moment, we keep type as Text for all mappings.
+        domainAttribute.setEntity(this.buildDomainEntity(attributeMetadata.getEntity()));
         
-        /*switch (attributeMetadata.getType().toLowerCase()) {
+        switch (attributeMetadata.getType().toLowerCase()) {
             case "number":
+                domainAttribute.setType(DomainAttributeType.NUMBER);
+                break;
+            case "serial":
+                domainAttribute.setType(DomainAttributeType.NUMBER);
+                break;
+            case "int4":
+                domainAttribute.setType(DomainAttributeType.NUMBER);
+                break;
+            case "float8":
                 domainAttribute.setType(DomainAttributeType.NUMBER);
                 break;
             case "text":
                 domainAttribute.setType(DomainAttributeType.TEXT);
                 break;
+            case "varchar":
+                domainAttribute.setType(DomainAttributeType.TEXT);
+                break;
             case "time":
                 domainAttribute.setType(DomainAttributeType.DATE);
                 break;
+            case "timestamp":
+                domainAttribute.setType(DomainAttributeType.DATE);
+                break;
+            case "geometry":
+                domainAttribute.setType(DomainAttributeType.GEOMETRY);
+                break;
             default:
-                throw new RuntimeException(
+            	domainAttribute.setType(DomainAttributeType.TEXT);
+                /*throw new RuntimeException(
                         String.format(
                                 "Attribute type '%s' is unknown.",
-                                attributeMetadata.getType().toLowerCase()));
-        }*/
+                                attributeMetadata.getType().toLowerCase()));*/
+        }
         return domainAttribute;
     }
 }

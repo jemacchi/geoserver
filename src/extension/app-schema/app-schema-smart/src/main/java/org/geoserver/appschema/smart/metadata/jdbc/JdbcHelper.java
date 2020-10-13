@@ -366,7 +366,7 @@ public class JdbcHelper {
                         if (uniqueIndexConstraint != null) {
                             return DomainRelationType.ONEONE;
                         } else {
-                            return DomainRelationType.MULTIPLEONE;
+                            return DomainRelationType.MANYONE;
                         }
                     }
                 }
@@ -380,6 +380,9 @@ public class JdbcHelper {
             Collection<JdbcForeignKeyColumnMetadata> fkColumnsList,
             SortedMap<EntityMetadata, JdbcPrimaryKeyConstraintMetadata> pkMap) {
         JdbcPrimaryKeyConstraintMetadata primaryKey = pkMap.get(table);
+        if (primaryKey == null) {
+        	return null;
+        }
         for (String columnName : primaryKey.getColumnNames()) {
             boolean containsPkColumnName = false;
             for (JdbcForeignKeyColumnMetadata fkColumns : fkColumnsList) {
@@ -398,6 +401,9 @@ public class JdbcHelper {
             JdbcTableMetadata table,
             Collection<JdbcForeignKeyColumnMetadata> fkColumnsList,
             SortedMap<String, Collection<String>> uniqueIndexMap) {
+    	if (uniqueIndexMap == null) {
+    		return null;
+    	}
         indexLoop:
         for (String uniqueIndexConstraint : uniqueIndexMap.keySet()) {
             if (uniqueIndexConstraint.startsWith(table.toString() + " - ")) {
