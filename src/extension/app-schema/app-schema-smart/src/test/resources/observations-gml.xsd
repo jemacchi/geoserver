@@ -1,66 +1,54 @@
 <?xml version="1.0" encoding="UTF-8"?><xs:schema xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:xs="http://www.w3.org/2001/XMLSchema" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="" version="1.0" xmlns:st="">
-  <xs:import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
-  <xs:element name="meteo_observations" substitutionGroup="gml:AbstractFeature" type="st:meteo_observationsType"/>
-  <xs:complexType name="meteo_observationsType">
-    <xs:complexContent>
-      <xs:extension base="gml:AbstractFeatureType">
-        <xs:sequence>
-          <xs:element maxOccurs="1" minOccurs="1" name="id" type="xs:double"/>
-          <xs:element maxOccurs="unbounded" minOccurs="0" name="parameter_id" type="meteo_parametersPropertyType"/>
-          <xs:element maxOccurs="unbounded" minOccurs="0" name="station_id" type="meteo_stationsPropertyType"/>
-          <xs:element maxOccurs="1" minOccurs="1" name="time" type="xs:dateTime"/>
-          <xs:element maxOccurs="1" minOccurs="1" name="value" type="xs:double"/>
+    <xs:import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+    <xs:element name="meteo_observations" substitutionGroup="gml:AbstractFeature" type="st:meteo_observationsType"/>
+    <xs:complexType name="meteo_observationsType">
+        <xs:complexContent>
+            <xs:extension base="gml:AbstractFeatureType">
+                <xs:sequence>
+                    <xs:element maxOccurs="1" minOccurs="1" name="id" type="xs:double"/>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="parameter_id" type="meteo_parametersPropertyType"/>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="station_id" type="meteo_stationsPropertyType"/>
+                    <xs:element maxOccurs="1" minOccurs="1" name="time" type="xs:dateTime"/>
+                    <xs:element maxOccurs="1" minOccurs="1" name="value" type="xs:double"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="meteo_parametersPropertyType">
+        <xs:sequence minOccurs="0">
+            <xs:element ref="st:meteo_parameters"/>
         </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:complexType name="meteo_parametersPropertyType">
-    <xs:sequence minOccurs="0">
-      <xs:element ref="st:meteo_parameters"/>
-    </xs:sequence>
-    <xs:attributeGroup ref="gml:AssociationAttributeGroup"/>
-  </xs:complexType>
-  <xs:element name="meteo_parameters" substitutionGroup="gml:AbstractFeature" type="st:meteo_parametersType"/>
-  <xs:complexType name="meteo_parametersType">
-    <xs:complexContent>
-      <xs:extension base="gml:AbstractFeatureType">
-        <xs:sequence>
-          <xs:element maxOccurs="1" minOccurs="1" name="id" type="xs:double"/>
-          <xs:element maxOccurs="1" minOccurs="1" name="param_name" type="xs:string"/>
-          <xs:element maxOccurs="1" minOccurs="1" name="param_unit" type="xs:string"/>
+        <xs:attributeGroup ref="gml:AssociationAttributeGroup"/>
+    </xs:complexType>
+    <xs:element name="meteo_parameters" substitutionGroup="gml:AbstractFeature" type="st:meteo_parametersType"/>
+    <xs:complexType name="meteo_parametersType">
+        <xs:complexContent>
+            <xs:extension base="gml:AbstractFeatureType">
+                <xs:sequence>
+                    <xs:element maxOccurs="1" minOccurs="1" name="id" type="xs:double"/>
+                    <xs:element maxOccurs="1" minOccurs="1" name="param_name" type="xs:string"/>
+                    <xs:element maxOccurs="1" minOccurs="1" name="param_unit" type="xs:string"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="meteo_stationsPropertyType">
+        <xs:sequence minOccurs="0">
+            <xs:element ref="st:meteo_stations"/>
         </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:complexType name="meteo_parametersPropertyType">
-    <xs:sequence minOccurs="0">
-      <xs:element ref="st:meteo_parameters"/>
-    </xs:sequence>
-    <xs:attributeGroup ref="gml:AssociationAttributeGroup"/>
-  </xs:complexType>
-  <xs:complexType name="meteo_stationsPropertyType">
-    <xs:sequence minOccurs="0">
-      <xs:element ref="st:meteo_stations"/>
-    </xs:sequence>
-    <xs:attributeGroup ref="gml:AssociationAttributeGroup"/>
-  </xs:complexType>
-  <xs:element name="meteo_stations" substitutionGroup="gml:AbstractFeature" type="st:meteo_stationsType"/>
-  <xs:complexType name="meteo_stationsType">
-    <xs:complexContent>
-      <xs:extension base="gml:AbstractFeatureType">
-        <xs:sequence>
-          <xs:element maxOccurs="1" minOccurs="1" name="id" type="xs:double"/>
-          <xs:element maxOccurs="1" minOccurs="1" name="code" type="xs:string"/>
-          <xs:element maxOccurs="1" minOccurs="1" name="common_name" type="xs:string"/>
-          <xs:element maxOccurs="1" minOccurs="0" name="position" type="gml:GeometryPropertyType"/>
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:complexType name="meteo_stationsPropertyType">
-    <xs:sequence minOccurs="0">
-      <xs:element ref="st:meteo_stations"/>
-    </xs:sequence>
-    <xs:attributeGroup ref="gml:AssociationAttributeGroup"/>
-  </xs:complexType>
+        <xs:attributeGroup ref="gml:AssociationAttributeGroup"/>
+    </xs:complexType>
+    <xs:element name="meteo_stations" substitutionGroup="gml:AbstractFeature" type="st:meteo_stationsType"/>
+    <xs:complexType name="meteo_stationsType">
+        <xs:complexContent>
+            <xs:extension base="gml:AbstractFeatureType">
+                <xs:sequence>
+                    <xs:element maxOccurs="1" minOccurs="1" name="id" type="xs:double"/>
+                    <xs:element maxOccurs="1" minOccurs="1" name="code" type="xs:string"/>
+                    <xs:element maxOccurs="1" minOccurs="1" name="common_name" type="xs:string"/>
+                    <xs:element maxOccurs="1" minOccurs="0" name="position" type="gml:GeometryPropertyType"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
 </xs:schema>

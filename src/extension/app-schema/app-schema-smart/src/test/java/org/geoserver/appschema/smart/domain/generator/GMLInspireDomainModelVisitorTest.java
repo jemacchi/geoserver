@@ -59,5 +59,30 @@ public final class GMLInspireDomainModelVisitorTest extends JDBCTestSupport {
         // Close JDBC connection
         metaData.getConnection().close();
     }
+    
+    @Test
+    public void testIndicatorInitiativeAssRootEntity() throws Exception {
+        // Define JdbcMetadataStoreConfig
+        DatabaseMetaData metaData = this.setup.getDataSource().getConnection().getMetaData();
+        DataStoreMetadataConfig config =
+                new JdbcDataStoreMetadataConfig(metaData.getConnection(), null, SCHEMA);
+        // Build DataStoreMetadata based on Config
+        DataStoreMetadata dsm = (new DataStoreMetadataFactory()).getDataStoreMetadata(config);
+        // Define root entity
+        DomainModelConfig dmc = new DomainModelConfig();
+        dmc.setRootEntityName("indicator_initiative_ass");
+        // Build AppSchema DomainModel
+        DomainModelBuilder dmb = new DomainModelBuilder(dsm, dmc);
+
+        DomainModel dm = dmb.getDomainModel();
+        GMLDomainModelVisitor dmv = new GMLDomainModelVisitor();
+        dm.accept(dmv);
+        
+        SmartAppSchemaTestHelper.printDocument(dmv.getDocument(), System.out);
+        //SmartAppSchemaTestHelper.saveDocumentToFile(dmv.getDocument(), "~/observations-gml.xsd");
+
+        // Close JDBC connection
+        metaData.getConnection().close();
+    }
 
 }

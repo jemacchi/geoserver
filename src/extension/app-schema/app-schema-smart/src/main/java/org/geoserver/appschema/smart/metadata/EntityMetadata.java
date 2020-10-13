@@ -12,8 +12,8 @@ public abstract class EntityMetadata implements Comparable<EntityMetadata> {
 
     protected String name;
 
-    protected List<AttributeMetadata> attributes = new ArrayList<>();
-    protected List<RelationMetadata> relations = new ArrayList<>();
+    protected final List<AttributeMetadata> attributes = new ArrayList<>();
+    protected final List<RelationMetadata> relations = new ArrayList<>();
 
     public EntityMetadata(String name) {
         this.name = name;

@@ -88,7 +88,7 @@ public final class GMLMeteoDomainModelVisitorTest extends JDBCTestSupport {
         GMLDomainModelVisitor dmv = new GMLDomainModelVisitor();
         dm.accept(dmv);
 
-        //SmartAppSchemaTestHelper.printDocument(dmv.getDocument(), System.out);
+        SmartAppSchemaTestHelper.printDocument(dmv.getDocument(), System.out);
         //SmartAppSchemaTestHelper.saveDocumentToFile(dmv.getDocument(), "~/stations-gml.xsd");
 
         // Close JDBC connection

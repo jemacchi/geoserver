@@ -64,7 +64,6 @@ public class JdbcDataStoreMetadata extends DataStoreMetadataImpl {
             if (e.getName().equals(name)) {
                 return e;
             }
-            ;
         }
         return null;
     }
