@@ -31,7 +31,7 @@ public class GMLDomainModelVisitor extends DomainModelVisitor {
         GMLDataTypesMappings.put(DomainAttributeType.GEOMETRY, "gml:GeometryPropertyType");
     }
 
-    private String namespaceSuffix = "st";
+    private String namespacePrefix = "st";
     private DocumentBuilder docBuilder;
     private Document document;
     private Element rootNode;
@@ -48,8 +48,8 @@ public class GMLDomainModelVisitor extends DomainModelVisitor {
             rootNode.setAttribute("version", "1.0");
             rootNode.setAttribute("xmlns:xs", "http://www.w3.org/2001/XMLSchema");
             rootNode.setAttribute("xmlns:gml", "http://www.opengis.net/gml/3.2");
-            rootNode.setAttribute("xmlns:" + this.namespaceSuffix, "");
-            rootNode.setAttribute("targetNamespace", "");
+            rootNode.setAttribute("xmlns:" + this.namespacePrefix, "CHANGE ME");
+            rootNode.setAttribute("targetNamespace", "CHANGE ME");
             rootNode.setAttribute("elementFormDefault", "qualified");
             rootNode.setAttribute("attributeFormDefault", "unqualified");
             document.appendChild(rootNode);
@@ -87,7 +87,7 @@ public class GMLDomainModelVisitor extends DomainModelVisitor {
         Element elementNode = document.createElement("xs:element");
         elementNode.setAttribute("name", domainEntity.getName());
         elementNode.setAttribute(
-                "type", this.namespaceSuffix + ":" + domainEntity.getName() + "Type");
+                "type", this.namespacePrefix + ":" + domainEntity.getName() + "Type");
         elementNode.setAttribute("substitutionGroup", "gml:AbstractFeature");
         rootNode.appendChild(elementNode);
 
@@ -128,7 +128,7 @@ public class GMLDomainModelVisitor extends DomainModelVisitor {
                 createComplexTypeSequenceNode(
                         propertyType,
                         0,
-                        this.namespaceSuffix
+                        this.namespacePrefix
                                 + ":"
                                 + domainRelation.getDestinationEntity().getName(),
                         "gml:AssociationAttributeGroup");
@@ -148,7 +148,7 @@ public class GMLDomainModelVisitor extends DomainModelVisitor {
                     String nNodeElementName =
                             element.getAttributes().getNamedItem("name").getNodeValue();
                     if (nNodeElementName.equals(domainRelation.getSourceAttribute().getName())) {
-                        element.getAttributes().getNamedItem("type").setNodeValue(propertyType);
+                        element.getAttributes().getNamedItem("type").setNodeValue(this.namespacePrefix+ ":"+propertyType);
                         // based on cardinality we need to rewrite minOccurs, maxOccurs
                         element.getAttributes()
                                 .getNamedItem("minOccurs")

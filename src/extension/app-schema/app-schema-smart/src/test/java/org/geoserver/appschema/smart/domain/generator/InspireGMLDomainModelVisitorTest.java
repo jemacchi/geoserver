@@ -1,12 +1,7 @@
 package org.geoserver.appschema.smart.domain.generator;
 
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
 import java.sql.DatabaseMetaData;
 
-import org.apache.commons.io.IOUtils;
 import org.geoserver.appschema.smart.domain.DomainModelBuilder;
 import org.geoserver.appschema.smart.domain.DomainModelConfig;
 import org.geoserver.appschema.smart.domain.entities.DomainModel;
@@ -21,7 +16,7 @@ import org.geotools.jdbc.JDBCTestSupport;
 import org.junit.Test;
 
 /** @author Jose Macchi - Geosolutions */
-public final class GMLInspireDomainModelVisitorTest extends JDBCTestSupport {
+public final class InspireGMLDomainModelVisitorTest extends JDBCTestSupport {
 
     private String SCHEMA = "public";
 
@@ -79,7 +74,7 @@ public final class GMLInspireDomainModelVisitorTest extends JDBCTestSupport {
         dm.accept(dmv);
         
         SmartAppSchemaTestHelper.printDocument(dmv.getDocument(), System.out);
-        //SmartAppSchemaTestHelper.saveDocumentToFile(dmv.getDocument(), "~/observations-gml.xsd");
+        SmartAppSchemaTestHelper.saveDocumentToFile(dmv.getDocument(), "/home/jmacchi/indicator_initiative_ass-gml.xsd");
 
         // Close JDBC connection
         metaData.getConnection().close();

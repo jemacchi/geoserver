@@ -1,12 +1,7 @@
 package org.geoserver.appschema.smart.domain.generator;
 
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
 import java.sql.DatabaseMetaData;
 
-import org.apache.commons.io.IOUtils;
 import org.geoserver.appschema.smart.domain.DomainModelBuilder;
 import org.geoserver.appschema.smart.domain.DomainModelConfig;
 import org.geoserver.appschema.smart.domain.entities.DomainModel;
@@ -21,7 +16,7 @@ import org.geotools.jdbc.JDBCTestSupport;
 import org.junit.Test;
 
 /** @author Jose Macchi - Geosolutions */
-public final class GMLMeteoDomainModelVisitorTest extends JDBCTestSupport {
+public final class MeteoSmartAppSchemaDomainModelVisitorTest extends JDBCTestSupport {
 
     private String SCHEMA = "meteo";
 
@@ -50,26 +45,16 @@ public final class GMLMeteoDomainModelVisitorTest extends JDBCTestSupport {
         DomainModelBuilder dmb = new DomainModelBuilder(dsm, dmc);
 
         DomainModel dm = dmb.getDomainModel();
-        GMLDomainModelVisitor dmv = new GMLDomainModelVisitor();
+        SmartAppSchemaDomainModelVisitor dmv = new SmartAppSchemaDomainModelVisitor();
         dm.accept(dmv);
         
-        
-        OutputStream docOutput = new ByteArrayOutputStream();
-        SmartAppSchemaTestHelper.printDocument(dmv.getDocument(), docOutput);
-        
-        InputStream is = SmartAppSchemaTestHelper.getFileFromResourceAsStream("observations-gml.xsd");
-        String resourceFile = IOUtils.toString(is, StandardCharsets.UTF_8.name());
-        
-
-        //assertEquals(resourceFile, docOutput.toString());
-        
         SmartAppSchemaTestHelper.printDocument(dmv.getDocument(), System.out);
-        //SmartAppSchemaTestHelper.saveDocumentToFile(dmv.getDocument(), "~/observations-gml.xsd");
+        SmartAppSchemaTestHelper.saveDocumentToFile(dmv.getDocument(), "/home/jmacchi/observations-appschema.xml");
 
         // Close JDBC connection
         metaData.getConnection().close();
     }
-
+    
     @Test
     public void testStationsRootEntity() throws Exception {
         // Define JdbcMetadataStoreConfig
@@ -85,13 +70,14 @@ public final class GMLMeteoDomainModelVisitorTest extends JDBCTestSupport {
         DomainModelBuilder dmb = new DomainModelBuilder(dsm, dmc);
 
         DomainModel dm = dmb.getDomainModel();
-        GMLDomainModelVisitor dmv = new GMLDomainModelVisitor();
+        SmartAppSchemaDomainModelVisitor dmv = new SmartAppSchemaDomainModelVisitor();
         dm.accept(dmv);
-
+        
         SmartAppSchemaTestHelper.printDocument(dmv.getDocument(), System.out);
-        //SmartAppSchemaTestHelper.saveDocumentToFile(dmv.getDocument(), "~/stations-gml.xsd");
+        SmartAppSchemaTestHelper.saveDocumentToFile(dmv.getDocument(), "/home/jmacchi/stations-appschema.xml");
 
         // Close JDBC connection
         metaData.getConnection().close();
     }
+   
 }

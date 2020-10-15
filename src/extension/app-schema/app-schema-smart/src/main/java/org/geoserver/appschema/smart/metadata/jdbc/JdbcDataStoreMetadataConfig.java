@@ -1,6 +1,11 @@
 package org.geoserver.appschema.smart.metadata.jdbc;
 
 import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.geoserver.appschema.smart.domain.metadata.jdbc.utils.JdbcUrlSplitter;
 import org.geoserver.appschema.smart.metadata.DataStoreMetadataConfig;
 
 /**
@@ -53,4 +58,33 @@ public class JdbcDataStoreMetadataConfig extends DataStoreMetadataConfig {
         stringBuilder.append(this.getSchema());
         return stringBuilder.toString();
     }
+
+	@Override
+	public Map<String, String> getParameters() {
+		Map<String,String> out = new HashMap<String, String>();
+		try {
+			// Parse URL to get values
+			JdbcUrlSplitter urlFields = new JdbcUrlSplitter(connection.getMetaData().getURL());
+			String dbtype = urlFields.driverName;
+			String host = urlFields.host;
+			String port = urlFields.port;
+			String database = urlFields.database;
+			String username = connection.getMetaData().getUserName();
+			// TODO: it's not possible to get it from JDBC API connection (makes sense)
+			String password = "CHANGE ME";
+			
+			out.put("dbtype", dbtype);
+			out.put("host", host);
+			out.put("port", port);
+			out.put("database", database);
+			out.put("schema", schema);
+			out.put("user", username);
+			out.put("passwd", password);
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return out;
+	}
 }

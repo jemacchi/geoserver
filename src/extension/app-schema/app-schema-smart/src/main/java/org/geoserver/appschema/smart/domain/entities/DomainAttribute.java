@@ -36,7 +36,4 @@ public final class DomainAttribute {
         this.entity = entity;
     }
 
-    /*public void accept(DomainModelVisitor visitor) {
-    	visitor.visit(entity);
-    }*/
 }
