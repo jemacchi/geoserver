@@ -1,7 +1,9 @@
 package org.geoserver.appschema.smart.utils;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -19,6 +21,7 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
@@ -27,6 +30,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+
 import org.geoserver.appschema.smart.domain.DomainModelVisitor;
 import org.geoserver.appschema.smart.domain.entities.DomainModel;
 import org.geoserver.appschema.smart.metadata.AttributeMetadata;
@@ -312,4 +316,12 @@ public class SmartAppSchemaTestHelper {
             e.printStackTrace();
         }
     }
+    
+    public static void saveStringToFile(String content, String pathname) throws IOException {
+	    String str = content;
+	    BufferedWriter writer = new BufferedWriter(new FileWriter(pathname));
+	    writer.write(str);
+	    writer.close();
+	}
+    
 }

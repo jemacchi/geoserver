@@ -1,5 +1,11 @@
 package org.geoserver.appschema.smart.domain.metadata.jdbc.utils;
 
+/**
+ * Utilities for getting parameters information from a JDBC URL
+ * 
+ * @author Jose Macchi - Geosolutions
+ *
+ */
 public class JdbcUrlSplitter
 {
   public String driverName, host, port, database, params;

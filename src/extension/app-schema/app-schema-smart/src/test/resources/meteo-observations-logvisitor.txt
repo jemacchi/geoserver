@@ -1,0 +1,10 @@
+org.geoserver.appschema.smart.domain.entities.DomainModel
+Type: JDBC - Connection: jdbc:postgresql://localhost:5432/gis - Catalog: null - Schema: meteo
+meteo_observations
+id
+parameter_id
+station_id
+time
+value
+meteo_observations -> meteo_parameters
+meteo_observations -> meteo_stations

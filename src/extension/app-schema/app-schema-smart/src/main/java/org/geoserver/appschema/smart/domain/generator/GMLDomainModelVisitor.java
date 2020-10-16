@@ -20,6 +20,12 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+/**
+ * DomainModelVisitor implementation that allows to create a GML document definition.
+ * 
+ * @author Jose Macchi - Geosolutions
+ *
+ */
 public class GMLDomainModelVisitor extends DomainModelVisitor {
 
     private static final Map<DomainAttributeType, String> GMLDataTypesMappings = new HashMap<>();
@@ -31,25 +37,27 @@ public class GMLDomainModelVisitor extends DomainModelVisitor {
         GMLDataTypesMappings.put(DomainAttributeType.GEOMETRY, "gml:GeometryPropertyType");
     }
 
-    private String namespacePrefix = "st";
+    private String namespacePrefix = "";
     private DocumentBuilder docBuilder;
     private Document document;
     private Element rootNode;
 
     private final Map<String, DomainEntity> domainEntitiesIndex = new HashMap<>();
 
-    public GMLDomainModelVisitor() {
+    public GMLDomainModelVisitor(String namespacePrefix, String targetNamespace) {
         docBuilder = null;
         try {
             docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
             document = docBuilder.newDocument();
 
+            this.namespacePrefix = namespacePrefix;
+            
             this.rootNode = document.createElement("xs:schema");
             rootNode.setAttribute("version", "1.0");
             rootNode.setAttribute("xmlns:xs", "http://www.w3.org/2001/XMLSchema");
             rootNode.setAttribute("xmlns:gml", "http://www.opengis.net/gml/3.2");
-            rootNode.setAttribute("xmlns:" + this.namespacePrefix, "CHANGE ME");
-            rootNode.setAttribute("targetNamespace", "CHANGE ME");
+            rootNode.setAttribute("xmlns:" + this.namespacePrefix, targetNamespace);
+            rootNode.setAttribute("targetNamespace", targetNamespace);
             rootNode.setAttribute("elementFormDefault", "qualified");
             rootNode.setAttribute("attributeFormDefault", "unqualified");
             document.appendChild(rootNode);
@@ -61,19 +69,18 @@ public class GMLDomainModelVisitor extends DomainModelVisitor {
             rootNode.appendChild(importNode);
 
         } catch (ParserConfigurationException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
 
     @Override
     public void visit(DataStoreMetadata dataStoreMetadata) {
-        // Nothing to map from DataStore in GML mappings
+        // nothing to map from DataStore in GML mappings
     }
 
     @Override
     public void visit(DomainModel domainModel) {
-        // Nothing to do in GML
+        // nothing to do in GML
     }
 
     @Override
@@ -141,7 +148,7 @@ public class GMLDomainModelVisitor extends DomainModelVisitor {
             String nNodeComplexTypeName = nNode.getAttributes().getNamedItem("name").getNodeValue();
             if (nNodeComplexTypeName.equals(complexTypeName)) {
                 Node sequence = nNode.getFirstChild().getFirstChild().getFirstChild();
-                // Update types
+                // update types
                 NodeList elements = sequence.getChildNodes();
                 for (int j = 0; j < elements.getLength(); j++) {
                     Node element = elements.item(j);

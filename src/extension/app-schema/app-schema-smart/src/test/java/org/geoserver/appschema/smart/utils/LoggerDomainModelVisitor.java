@@ -13,34 +13,45 @@ import org.geotools.util.logging.Logging;
 public class LoggerDomainModelVisitor extends DomainModelVisitor {
 
     private static final Logger LOGGER = Logging.getLogger(LoggerDomainModelVisitor.class);
+    private StringBuilder internalLogger = new StringBuilder();
 
     @Override
     public void visit(DataStoreMetadata dataStoreMetadata) {
-        LOGGER.log(Level.INFO, dataStoreMetadata.getDataStoreMetadataConfig().toString());
+    	String ds = dataStoreMetadata.getDataStoreMetadataConfig().toString();
+        LOGGER.log(Level.INFO, ds);
+        internalLogger.append(ds + "\n");
     }
 
     @Override
     public void visit(DomainModel domainModel) {
-        LOGGER.log(Level.INFO, domainModel.toString());
+    	String dm = domainModel.getClass().getName();
+        LOGGER.log(Level.INFO, dm);
+        internalLogger.append(dm + "\n");
     }
 
     @Override
     public void visit(DomainEntity domainEntity) {
-        LOGGER.log(Level.INFO, domainEntity.getName());
+    	String de = domainEntity.getName();
+        LOGGER.log(Level.INFO, de);
+        internalLogger.append(de + "\n");
         domainEntity.accept(this);
     }
 
     @Override
     public void visit(DomainAttribute domainAttribute) {
+    	String da = domainAttribute.getName();
         LOGGER.log(Level.INFO, domainAttribute.getName());
+        internalLogger.append(da + "\n");
     }
 
     @Override
     public void visit(DomainRelation domainRelation) {
-        LOGGER.log(
-                Level.INFO,
-                domainRelation.getSourceEntity().getName()
-                        + " -> "
-                        + domainRelation.getDestinationEntity().getName());
+    	String dr = domainRelation.getSourceEntity().getName() + " -> " + domainRelation.getDestinationEntity().getName();
+        LOGGER.log(Level.INFO, dr);
+        internalLogger.append(dr+ "\n");
+    }
+    
+    public String getLog() {
+    	return internalLogger.toString();
     }
 }

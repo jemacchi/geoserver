@@ -9,17 +9,16 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import org.geoserver.appschema.smart.SmartAppSchemaPostgisTestSupport;
 import org.geoserver.appschema.smart.metadata.AttributeMetadata;
 import org.geoserver.appschema.smart.metadata.EntityMetadata;
 import org.geoserver.appschema.smart.metadata.jdbc.JdbcForeignKeyColumnMetadata;
 import org.geoserver.appschema.smart.metadata.jdbc.JdbcHelper;
 import org.geoserver.appschema.smart.metadata.jdbc.JdbcTableMetadata;
-import org.geoserver.appschema.smart.metadata.jdbc.SmartAppSchemaJdbcTestSetup;
 import org.geoserver.appschema.smart.metadata.jdbc.constraint.JdbcForeignKeyConstraintMetadata;
 import org.geoserver.appschema.smart.metadata.jdbc.constraint.JdbcPrimaryKeyConstraintMetadata;
 import org.geoserver.appschema.smart.utils.SmartAppSchemaTestHelper;
-import org.geotools.jdbc.JDBCTestSetup;
-import org.geotools.jdbc.JDBCTestSupport;
 import org.geotools.util.logging.Logging;
 import org.junit.Test;
 
@@ -28,21 +27,10 @@ import org.junit.Test;
  *
  * @author Jose Macchi - Geosolutions
  */
-public class JdbcHelperTest extends JDBCTestSupport {
+public class JdbcHelperTest extends SmartAppSchemaPostgisTestSupport {
 
     private static final Logger LOGGER = Logging.getLogger(JdbcHelperTest.class);
     private JdbcHelper JDBC_HELPER = JdbcHelper.getInstance();
-    private String SCHEMA = "meteo";
-
-    @Override
-    protected JDBCTestSetup createTestSetup() {
-        try {
-            return new SmartAppSchemaJdbcTestSetup();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
 
     @Test
     public void testMeteoPrimaryKeys() throws Exception {
@@ -51,6 +39,9 @@ public class JdbcHelperTest extends JDBCTestSupport {
         SortedMap<EntityMetadata, JdbcPrimaryKeyConstraintMetadata> pkMap =
                 JDBC_HELPER.getPrimaryKeyColumns(metaData, tables);
         SmartAppSchemaTestHelper.printPrimaryKeys(pkMap);
+        
+        // TODO: add assertions
+        
         metaData.getConnection().close();
     }
 
@@ -63,6 +54,9 @@ public class JdbcHelperTest extends JDBCTestSupport {
             JdbcTableMetadata t = it.next();
             LOGGER.log(Level.INFO, t.getCatalog() + " - " + t.getSchema() + " - " + t.getName());
         }
+        
+        // TODO: add assertions
+        
         metaData.getConnection().close();
     }
 
@@ -76,6 +70,9 @@ public class JdbcHelperTest extends JDBCTestSupport {
         SortedMap<EntityMetadata, JdbcPrimaryKeyConstraintMetadata> pkMap =
                 JDBC_HELPER.getPrimaryKeyColumns(metaData, tables);
         SmartAppSchemaTestHelper.printPrimaryKeys(pkMap);
+        
+        // TODO: add assertions
+
         metaData.getConnection().close();
     }
 
@@ -89,6 +86,9 @@ public class JdbcHelperTest extends JDBCTestSupport {
         SortedMap<JdbcTableMetadata, List<AttributeMetadata>> cMap =
                 JDBC_HELPER.getColumns(metaData, tables);
         SmartAppSchemaTestHelper.printColumns(cMap);
+        
+        // TODO: add assertions
+        
         metaData.getConnection().close();
     }
 
@@ -102,6 +102,9 @@ public class JdbcHelperTest extends JDBCTestSupport {
         SortedMap<JdbcTableMetadata, List<AttributeMetadata>> cMap =
                 JDBC_HELPER.getColumns(metaData, tables);
         SmartAppSchemaTestHelper.printColumns(cMap);
+        
+        // TODO: add assertions
+        
         metaData.getConnection().close();
     }
 
@@ -116,6 +119,9 @@ public class JdbcHelperTest extends JDBCTestSupport {
         SortedMap<String, Collection<String>> uniqueIndexMultimap =
                 JDBC_HELPER.getIndexColumns(metaData, tables, true, true);
         SmartAppSchemaTestHelper.printForeignKeys(fkMap, pkMap, uniqueIndexMultimap);
+        
+        // TODO: add assertions
+        
         metaData.getConnection().close();
     }
 
@@ -134,6 +140,9 @@ public class JdbcHelperTest extends JDBCTestSupport {
         SortedMap<String, Collection<String>> uniqueIndexMultimap =
                 JDBC_HELPER.getIndexesByTable(metaData, table, true, true);
         SmartAppSchemaTestHelper.printForeignKeys(fkMultimap, pkMap, uniqueIndexMultimap);
+        
+        // TODO: add assertions
+        
         metaData.getConnection().close();
     }
 
@@ -152,6 +161,9 @@ public class JdbcHelperTest extends JDBCTestSupport {
         SortedMap<String, Collection<String>> uniqueIndexMultimap =
                 JDBC_HELPER.getIndexesByTable(metaData, table, true, true);
         SmartAppSchemaTestHelper.printForeignKeys(fkMultimap, pkMap, uniqueIndexMultimap);
+        
+        // TODO: add assertions
+        
         metaData.getConnection().close();
     }
 
@@ -162,6 +174,9 @@ public class JdbcHelperTest extends JDBCTestSupport {
         SortedMap<String, Collection<String>> uniqueIndexMultimap =
                 JDBC_HELPER.getIndexColumns(metaData, tables, false, true);
         SmartAppSchemaTestHelper.printIndexes(uniqueIndexMultimap);
+        
+        // TODO: add assertions
+        
         metaData.getConnection().close();
     }
 
@@ -173,6 +188,9 @@ public class JdbcHelperTest extends JDBCTestSupport {
         SortedMap<String, Collection<String>> uniqueIndexMultimap =
                 JDBC_HELPER.getIndexesByTable(metaData, table, false, true);
         SmartAppSchemaTestHelper.printIndexes(uniqueIndexMultimap);
+        
+        // TODO: add assertions
+        
         metaData.getConnection().close();
     }
 
@@ -183,6 +201,9 @@ public class JdbcHelperTest extends JDBCTestSupport {
         SortedMap<String, Collection<String>> uniqueIndexMultimap =
                 JDBC_HELPER.getIndexColumns(metaData, tables, true, true);
         SmartAppSchemaTestHelper.printIndexes(uniqueIndexMultimap);
+        
+        // TODO: add assertions
+        
         metaData.getConnection().close();
     }
 
@@ -194,6 +215,9 @@ public class JdbcHelperTest extends JDBCTestSupport {
         SortedMap<String, Collection<String>> uniqueIndexMultimap =
                 JDBC_HELPER.getIndexesByTable(metaData, table, true, true);
         SmartAppSchemaTestHelper.printIndexes(uniqueIndexMultimap);
+        
+        // TODO: add assertions
+        
         metaData.getConnection().close();
     }
 }

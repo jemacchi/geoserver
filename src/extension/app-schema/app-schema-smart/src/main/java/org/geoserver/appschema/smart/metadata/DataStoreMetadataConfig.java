@@ -9,6 +9,8 @@ import java.util.Map;
  * @author Jose Macchi - Geosolutions
  */
 public abstract class DataStoreMetadataConfig {
+	
+	public abstract String getName();
 
     public abstract String getType();
     

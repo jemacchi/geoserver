@@ -1,76 +1,57 @@
 package org.geoserver.appschema.smart.domain;
 
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.sql.DatabaseMetaData;
-import java.util.logging.Logger;
+
+import org.apache.commons.io.IOUtils;
+import org.geoserver.appschema.smart.SmartAppSchemaPostgisTestSupport;
 import org.geoserver.appschema.smart.domain.entities.DomainModel;
 import org.geoserver.appschema.smart.metadata.DataStoreMetadata;
-import org.geoserver.appschema.smart.metadata.DataStoreMetadataConfig;
-import org.geoserver.appschema.smart.metadata.DataStoreMetadataFactory;
-import org.geoserver.appschema.smart.metadata.jdbc.JdbcDataStoreMetadataConfig;
-import org.geoserver.appschema.smart.metadata.jdbc.SmartAppSchemaJdbcTestSetup;
 import org.geoserver.appschema.smart.utils.LoggerDomainModelVisitor;
-import org.geotools.jdbc.JDBCTestSetup;
-import org.geotools.jdbc.JDBCTestSupport;
-import org.geotools.util.logging.Logging;
+import org.geoserver.appschema.smart.utils.SmartAppSchemaTestHelper;
 import org.junit.Test;
 
-/** @author Jose Macchi - Geosolutions */
-public final class DomainModelVisitorTest extends JDBCTestSupport {
-
-    private static final Logger LOGGER = Logging.getLogger(DomainModelVisitorTest.class);
-    private String SCHEMA = "meteo";
-
-    @Override
-    protected JDBCTestSetup createTestSetup() {
-        try {
-            return new SmartAppSchemaJdbcTestSetup();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
+/** 
+ * Tests related to a simple DomainModelVisitor (which logs DomainModel visited nodes) 
+ * 
+ * @author Jose Macchi - Geosolutions 
+ * */
+public final class DomainModelVisitorTest extends SmartAppSchemaPostgisTestSupport {
 
     @Test
     public void testDomainModelVisitWithStations() throws Exception {
-        // Define JdbcMetadataStoreConfig
         DatabaseMetaData metaData = this.setup.getDataSource().getConnection().getMetaData();
-        DataStoreMetadataConfig config =
-                new JdbcDataStoreMetadataConfig(metaData.getConnection(), null, SCHEMA);
-        // Build DataStoreMetadata based on Config
-        DataStoreMetadata dsm = (new DataStoreMetadataFactory()).getDataStoreMetadata(config);
-        // Define root entity
+    	DataStoreMetadata dsm = this.getDataStoreMetadata(metaData);
         DomainModelConfig dmc = new DomainModelConfig();
         dmc.setRootEntityName("meteo_stations");
-        // Build AppSchema DomainModel
         DomainModelBuilder dmb = new DomainModelBuilder(dsm, dmc);
-
         DomainModel dm = dmb.getDomainModel();
-        DomainModelVisitor dmv = new LoggerDomainModelVisitor();
+        LoggerDomainModelVisitor dmv = new LoggerDomainModelVisitor();
         dm.accept(dmv);
-
-        // Close JDBC connection
+        
+        InputStream is = SmartAppSchemaTestHelper.getFileFromResourceAsStream("meteo-stations-logvisitor.txt");
+        String expected = IOUtils.toString(is, StandardCharsets.UTF_8);
+        assertEquals(expected, dmv.getLog());
+        
         metaData.getConnection().close();
     }
 
     @Test
     public void testDomainModelVisitWithObservations() throws Exception {
-        // Define JdbcMetadataStoreConfig
         DatabaseMetaData metaData = this.setup.getDataSource().getConnection().getMetaData();
-        DataStoreMetadataConfig config =
-                new JdbcDataStoreMetadataConfig(metaData.getConnection(), null, SCHEMA);
-        // Build DataStoreMetadata based on Config
-        DataStoreMetadata dsm = (new DataStoreMetadataFactory()).getDataStoreMetadata(config);
-        // Define root entity
+    	DataStoreMetadata dsm = this.getDataStoreMetadata(metaData);
         DomainModelConfig dmc = new DomainModelConfig();
         dmc.setRootEntityName("meteo_observations");
-        // Build AppSchema DomainModel
         DomainModelBuilder dmb = new DomainModelBuilder(dsm, dmc);
-
         DomainModel dm = dmb.getDomainModel();
-        DomainModelVisitor dmv = new LoggerDomainModelVisitor();
+        LoggerDomainModelVisitor dmv = new LoggerDomainModelVisitor();
         dm.accept(dmv);
-
-        // Close JDBC connection
+        
+        InputStream is = SmartAppSchemaTestHelper.getFileFromResourceAsStream("meteo-observations-logvisitor.txt");
+        String expected = IOUtils.toString(is, StandardCharsets.UTF_8);
+        assertEquals(expected, dmv.getLog());
+        
         metaData.getConnection().close();
     }
 }
