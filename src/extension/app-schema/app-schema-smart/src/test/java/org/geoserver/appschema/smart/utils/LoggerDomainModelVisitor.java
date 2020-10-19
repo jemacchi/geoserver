@@ -1,5 +1,7 @@
 package org.geoserver.appschema.smart.utils;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.geoserver.appschema.smart.domain.DomainModelVisitor;
@@ -14,6 +16,8 @@ public class LoggerDomainModelVisitor extends DomainModelVisitor {
 
     private static final Logger LOGGER = Logging.getLogger(LoggerDomainModelVisitor.class);
     private StringBuilder internalLogger = new StringBuilder();
+    
+    private final Map<String, DomainEntity> domainEntitiesIndex = new HashMap<>();
 
     @Override
     public void visit(DataStoreMetadata dataStoreMetadata) {
@@ -31,9 +35,17 @@ public class LoggerDomainModelVisitor extends DomainModelVisitor {
 
     @Override
     public void visit(DomainEntity domainEntity) {
+    	DomainEntity candidateDomainEntity = domainEntitiesIndex.get(domainEntity.getName());
+        if (candidateDomainEntity != null) {
+            // we are done, we already visit this domainEntity
+            return;
+        }
+        
         String de = domainEntity.getName();
         LOGGER.log(Level.INFO, de);
         internalLogger.append(de + "\n");
+        
+        domainEntitiesIndex.put(domainEntity.getName(), domainEntity);
         domainEntity.accept(this);
     }
 
@@ -52,6 +64,7 @@ public class LoggerDomainModelVisitor extends DomainModelVisitor {
                         + domainRelation.getDestinationEntity().getName();
         LOGGER.log(Level.INFO, dr);
         internalLogger.append(dr + "\n");
+        domainRelation.accept(this);
     }
 
     public String getLog() {
