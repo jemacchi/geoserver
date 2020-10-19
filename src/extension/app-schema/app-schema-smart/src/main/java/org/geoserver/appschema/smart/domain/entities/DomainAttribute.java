@@ -1,6 +1,5 @@
 package org.geoserver.appschema.smart.domain.entities;
 
-
 /**
  * Class representing an attribute of an entity on the Smart AppSchema model.
  *
@@ -35,5 +34,4 @@ public final class DomainAttribute {
     public void setEntity(DomainEntity entity) {
         this.entity = entity;
     }
-
 }

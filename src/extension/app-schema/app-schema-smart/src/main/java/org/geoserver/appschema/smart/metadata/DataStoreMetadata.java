@@ -9,8 +9,8 @@ import java.util.List;
  * @author Jose Macchi - Geosolutions
  */
 public interface DataStoreMetadata {
-	
-	public String getName();
+
+    public String getName();
 
     public DataStoreMetadataConfig getDataStoreMetadataConfig();
 

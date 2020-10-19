@@ -86,7 +86,10 @@ public final class DomainModelBuilder {
         DomainAttribute domainAttribute = new DomainAttribute();
         domainAttribute.setName(attributeMetadata.getName());
         domainAttribute.setType(DomainAttributeType.TEXT);
-        domainAttribute.setEntity(this.buildDomainEntity(dataStoreMetadata.getEntityMetadata(attributeMetadata.getEntity().getName())));
+        domainAttribute.setEntity(
+                this.buildDomainEntity(
+                        dataStoreMetadata.getEntityMetadata(
+                                attributeMetadata.getEntity().getName())));
 
         switch (attributeMetadata.getType().toLowerCase()) {
             case "number":

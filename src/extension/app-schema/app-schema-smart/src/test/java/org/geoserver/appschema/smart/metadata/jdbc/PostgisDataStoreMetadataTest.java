@@ -3,7 +3,6 @@ package org.geoserver.appschema.smart.metadata.jdbc;
 import java.sql.DatabaseMetaData;
 import java.util.Iterator;
 import java.util.List;
-
 import org.geoserver.appschema.smart.SmartAppSchemaPostgisTestSupport;
 import org.geoserver.appschema.smart.metadata.AttributeMetadata;
 import org.geoserver.appschema.smart.metadata.DataStoreMetadata;
@@ -36,9 +35,9 @@ public class PostgisDataStoreMetadataTest extends SmartAppSchemaPostgisTestSuppo
 
         List<RelationMetadata> relations = dm.getDataStoreRelations();
         SmartAppSchemaTestHelper.printObjectsFromList(relations);
-        
+
         // TODO: add assertions
-        
+
         metaData.getConnection().close();
     }
 
@@ -48,9 +47,9 @@ public class PostgisDataStoreMetadataTest extends SmartAppSchemaPostgisTestSuppo
         EntityMetadata entity =
                 new JdbcTableMetadata(metaData.getConnection(), null, SCHEMA, "meteo_observations");
         SmartAppSchemaTestHelper.printObjectsFromList(entity.getAttributes());
-        
+
         // TODO: add assertions
-        
+
         metaData.getConnection().close();
     }
 
@@ -60,9 +59,9 @@ public class PostgisDataStoreMetadataTest extends SmartAppSchemaPostgisTestSuppo
         EntityMetadata entity =
                 new JdbcTableMetadata(metaData.getConnection(), null, SCHEMA, "meteo_observations");
         SmartAppSchemaTestHelper.printObjectsFromList(entity.getRelations());
-        
+
         // TODO: add assertions
-        
+
         metaData.getConnection().close();
     }
 }

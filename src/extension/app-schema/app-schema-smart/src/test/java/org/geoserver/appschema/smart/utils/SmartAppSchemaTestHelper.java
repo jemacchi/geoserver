@@ -3,6 +3,7 @@ package org.geoserver.appschema.smart.utils;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -290,7 +291,7 @@ public class SmartAppSchemaTestHelper {
 
         transf.transform(source, file);
     }
-    
+
     public static InputStream getFileFromResourceAsStream(String fileName) {
         ClassLoader classLoader = SmartAppSchemaTestHelper.class.getClassLoader();
         InputStream inputStream = classLoader.getResourceAsStream(fileName);
@@ -299,13 +300,33 @@ public class SmartAppSchemaTestHelper {
         } else {
             return inputStream;
         }
-
     }
     
+    public static File getResourceAsFile(String resourcePath) {
+        try {
+            InputStream in = ClassLoader.getSystemClassLoader().getResourceAsStream(resourcePath);
+            if (in == null) {
+                return null;
+            }
+            File tempFile = File.createTempFile(String.valueOf(in.hashCode()), ".tmp");
+            tempFile.deleteOnExit();
+            try (FileOutputStream out = new FileOutputStream(tempFile)) {
+                byte[] buffer = new byte[1024];
+                int bytesRead;
+                while ((bytesRead = in.read(buffer)) != -1) {
+                    out.write(buffer, 0, bytesRead);
+                }
+            }
+            return tempFile;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     public static void printInputStream(InputStream is) {
-        try (InputStreamReader streamReader =
-                    new InputStreamReader(is, StandardCharsets.UTF_8);
-             BufferedReader reader = new BufferedReader(streamReader)) {
+        try (InputStreamReader streamReader = new InputStreamReader(is, StandardCharsets.UTF_8);
+                BufferedReader reader = new BufferedReader(streamReader)) {
 
             String line;
             while ((line = reader.readLine()) != null) {
@@ -316,12 +337,11 @@ public class SmartAppSchemaTestHelper {
             e.printStackTrace();
         }
     }
-    
+
     public static void saveStringToFile(String content, String pathname) throws IOException {
-	    String str = content;
-	    BufferedWriter writer = new BufferedWriter(new FileWriter(pathname));
-	    writer.write(str);
-	    writer.close();
-	}
-    
+        String str = content;
+        BufferedWriter writer = new BufferedWriter(new FileWriter(pathname));
+        writer.write(str);
+        writer.close();
+    }
 }

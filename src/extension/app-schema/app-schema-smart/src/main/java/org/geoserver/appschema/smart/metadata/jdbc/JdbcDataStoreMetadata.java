@@ -68,8 +68,8 @@ public class JdbcDataStoreMetadata extends DataStoreMetadataImpl {
         return null;
     }
 
-	@Override
-	public String getName() {
-		return config.getName();
-	}
+    @Override
+    public String getName() {
+        return config.getName();
+    }
 }

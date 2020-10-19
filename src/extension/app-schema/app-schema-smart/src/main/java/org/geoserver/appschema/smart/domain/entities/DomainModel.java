@@ -21,9 +21,9 @@ public class DomainModel {
     }
 
     public void accept(DomainModelVisitor visitor) {
-    	// visit me
-    	visitor.visit(this);
-    	// visit my childs
+        // visit me
+        visitor.visit(this);
+        // visit my childs
         visitor.visit(dataStoreMetadata);
         visitor.visit(rootEntity);
     }

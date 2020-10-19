@@ -17,21 +17,21 @@ public class LoggerDomainModelVisitor extends DomainModelVisitor {
 
     @Override
     public void visit(DataStoreMetadata dataStoreMetadata) {
-    	String ds = dataStoreMetadata.getDataStoreMetadataConfig().toString();
+        String ds = dataStoreMetadata.getDataStoreMetadataConfig().toString();
         LOGGER.log(Level.INFO, ds);
         internalLogger.append(ds + "\n");
     }
 
     @Override
     public void visit(DomainModel domainModel) {
-    	String dm = domainModel.getClass().getName();
+        String dm = domainModel.getClass().getName();
         LOGGER.log(Level.INFO, dm);
         internalLogger.append(dm + "\n");
     }
 
     @Override
     public void visit(DomainEntity domainEntity) {
-    	String de = domainEntity.getName();
+        String de = domainEntity.getName();
         LOGGER.log(Level.INFO, de);
         internalLogger.append(de + "\n");
         domainEntity.accept(this);
@@ -39,19 +39,22 @@ public class LoggerDomainModelVisitor extends DomainModelVisitor {
 
     @Override
     public void visit(DomainAttribute domainAttribute) {
-    	String da = domainAttribute.getName();
+        String da = domainAttribute.getName();
         LOGGER.log(Level.INFO, domainAttribute.getName());
         internalLogger.append(da + "\n");
     }
 
     @Override
     public void visit(DomainRelation domainRelation) {
-    	String dr = domainRelation.getSourceEntity().getName() + " -> " + domainRelation.getDestinationEntity().getName();
+        String dr =
+                domainRelation.getSourceEntity().getName()
+                        + " -> "
+                        + domainRelation.getDestinationEntity().getName();
         LOGGER.log(Level.INFO, dr);
-        internalLogger.append(dr+ "\n");
+        internalLogger.append(dr + "\n");
     }
-    
+
     public String getLog() {
-    	return internalLogger.toString();
+        return internalLogger.toString();
     }
 }

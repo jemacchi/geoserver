@@ -26,7 +26,7 @@
           <sourceExpression>
             <OCQL>endpoint</OCQL>
             <linkField>FEATURE_LINK[1]</linkField>
-            <linkElement>inspire:id</linkElement>
+            <linkElement>inspire:endpoint</linkElement>
           </sourceExpression>
         </AttributeMapping>
         <AttributeMapping>
@@ -34,7 +34,7 @@
           <sourceExpression>
             <OCQL>code</OCQL>
             <linkField>FEATURE_LINK[1]</linkField>
-            <linkElement>inspire:code</linkElement>
+            <linkElement>inspire:indicators</linkElement>
           </sourceExpression>
         </AttributeMapping>
       </attributeMappings>
@@ -61,7 +61,7 @@
           <sourceExpression>
             <OCQL>vocabulary</OCQL>
             <linkField>FEATURE_LINK[1]</linkField>
-            <linkElement>inspire:name</linkElement>
+            <linkElement>inspire:vocabularies</linkElement>
           </sourceExpression>
         </AttributeMapping>
         <AttributeMapping>
@@ -167,7 +167,7 @@
           <sourceExpression>
             <OCQL>prj_code</OCQL>
             <linkField>FEATURE_LINK[1]</linkField>
-            <linkElement>inspire:prj_code</linkElement>
+            <linkElement>inspire:initiative</linkElement>
           </sourceExpression>
         </AttributeMapping>
         <AttributeMapping>

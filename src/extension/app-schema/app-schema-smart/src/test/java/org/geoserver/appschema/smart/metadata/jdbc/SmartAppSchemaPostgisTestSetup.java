@@ -9,10 +9,15 @@ import org.geotools.jdbc.JDBCTestSetup;
  *
  * @author Jose Macchi - Geosolutions
  */
-public class SmartAppSchemaPostgisTestSetup extends JDBCTestSetup {
+public class SmartAppSchemaPostgisTestSetup extends JDBCTestSetup { //extends AppSchemaTestPostgisSetup {
 
-    @Override
-    protected JDBCDataStoreFactory createDataStoreFactory() {
-        return new PostgisNGDataStoreFactory();
-    }
+	/*public SmartAppSchemaPostgisTestSetup(Map<String, File> propertyFiles) throws Exception {
+		super(propertyFiles);
+	}*/
+
+	@Override
+	protected JDBCDataStoreFactory createDataStoreFactory() {
+	    return new PostgisNGDataStoreFactory();
+	}
+	
 }

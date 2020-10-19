@@ -2,11 +2,9 @@ package org.geoserver.appschema.smart.domain.generator;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-
 import org.geoserver.appschema.smart.domain.DomainModelVisitor;
 import org.geoserver.appschema.smart.domain.entities.DomainAttribute;
 import org.geoserver.appschema.smart.domain.entities.DomainAttributeType;
@@ -22,9 +20,8 @@ import org.w3c.dom.NodeList;
 
 /**
  * DomainModelVisitor implementation that allows to create a GML document definition.
- * 
- * @author Jose Macchi - Geosolutions
  *
+ * @author Jose Macchi - Geosolutions
  */
 public class GMLDomainModelVisitor extends DomainModelVisitor {
 
@@ -51,7 +48,7 @@ public class GMLDomainModelVisitor extends DomainModelVisitor {
             document = docBuilder.newDocument();
 
             this.namespacePrefix = namespacePrefix;
-            
+
             this.rootNode = document.createElement("xs:schema");
             rootNode.setAttribute("version", "1.0");
             rootNode.setAttribute("xmlns:xs", "http://www.w3.org/2001/XMLSchema");
@@ -155,7 +152,9 @@ public class GMLDomainModelVisitor extends DomainModelVisitor {
                     String nNodeElementName =
                             element.getAttributes().getNamedItem("name").getNodeValue();
                     if (nNodeElementName.equals(domainRelation.getSourceAttribute().getName())) {
-                        element.getAttributes().getNamedItem("type").setNodeValue(this.namespacePrefix+ ":"+propertyType);
+                        element.getAttributes()
+                                .getNamedItem("type")
+                                .setNodeValue(this.namespacePrefix + ":" + propertyType);
                         // based on cardinality we need to rewrite minOccurs, maxOccurs
                         element.getAttributes()
                                 .getNamedItem("minOccurs")
@@ -225,5 +224,4 @@ public class GMLDomainModelVisitor extends DomainModelVisitor {
         if (type.equals(DomainRelationType.MANYONE)) return "unbounded";
         return "1";
     }
-    
 }
