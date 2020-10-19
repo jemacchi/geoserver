@@ -37,33 +37,4 @@ public class DomainModelBuilderTest extends SmartAppSchemaPostgisTestSupport {
         metaData.getConnection().close();
     }
 
-    @Test
-    public void testDomainModelBuilderWithJdbcDataStoreMetadataRootStations() throws Exception {
-        DatabaseMetaData metaData = this.setup.getDataSource().getConnection().getMetaData();
-        DataStoreMetadata dsm = this.getDataStoreMetadata(metaData);
-        DomainModelConfig dmc = new DomainModelConfig();
-        dmc.setRootEntityName("meteo_stations");
-        DomainModelBuilder dmb = new DomainModelBuilder(dsm, dmc);
-        DomainModel dm = dmb.getDomainModel();
-        LOGGER.log(Level.INFO, dm.toString());
-
-        // TODO: add my assertions
-
-        metaData.getConnection().close();
-    }
-
-    @Test
-    public void testDomainModelBuilderWithJdbcDataStoreMetadataRootObservations() throws Exception {
-        DatabaseMetaData metaData = this.setup.getDataSource().getConnection().getMetaData();
-        DataStoreMetadata dsm = this.getDataStoreMetadata(metaData);
-        DomainModelConfig dmc = new DomainModelConfig();
-        dmc.setRootEntityName("meteo_observations");
-        DomainModelBuilder dmb = new DomainModelBuilder(dsm, dmc);
-        DomainModel dm = dmb.getDomainModel();
-        LOGGER.log(Level.INFO, dm.toString());
-
-        // TODO: add my assertions
-
-        metaData.getConnection().close();
-    }
 }

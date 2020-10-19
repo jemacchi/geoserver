@@ -29,6 +29,7 @@ public class GMLDomainModelVisitor extends DomainModelVisitor {
 
     static {
         GMLDataTypesMappings.put(DomainAttributeType.TEXT, "xs:string");
+        GMLDataTypesMappings.put(DomainAttributeType.INT, "xs:int");
         GMLDataTypesMappings.put(DomainAttributeType.NUMBER, "xs:double");
         GMLDataTypesMappings.put(DomainAttributeType.DATE, "xs:dateTime");
         GMLDataTypesMappings.put(DomainAttributeType.GEOMETRY, "gml:GeometryPropertyType");

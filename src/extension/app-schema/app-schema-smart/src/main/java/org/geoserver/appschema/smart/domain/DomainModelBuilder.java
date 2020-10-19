@@ -96,10 +96,10 @@ public final class DomainModelBuilder {
                 domainAttribute.setType(DomainAttributeType.NUMBER);
                 break;
             case "serial":
-                domainAttribute.setType(DomainAttributeType.NUMBER);
+                domainAttribute.setType(DomainAttributeType.INT);
                 break;
             case "int4":
-                domainAttribute.setType(DomainAttributeType.NUMBER);
+                domainAttribute.setType(DomainAttributeType.INT);
                 break;
             case "float8":
                 domainAttribute.setType(DomainAttributeType.NUMBER);
