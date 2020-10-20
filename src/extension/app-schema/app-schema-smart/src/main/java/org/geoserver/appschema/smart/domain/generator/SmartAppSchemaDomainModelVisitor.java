@@ -138,62 +138,42 @@ public class SmartAppSchemaDomainModelVisitor extends DomainModelVisitor {
 
     @Override
     public void visit(DomainRelation domainRelation) {
-        String sourceTargetElementValue =
-                namespacePrefix + ":" + domainRelation.getSourceEntity().getName();
-        String sourceTargetAttributeValue =
-                namespacePrefix + ":" + domainRelation.getSourceAttribute().getName();
-        Node sourceAttributeMappingNode =
-                getAttributeMapping(sourceTargetElementValue, sourceTargetAttributeValue);
-        if (sourceAttributeMappingNode != null) {
-            // modify attributeMapping with linkElement and linkField nodes in source entity
-            NodeList saChilds = sourceAttributeMappingNode.getChildNodes();
-            for (int i = 0; i < saChilds.getLength(); i++) {
-                Node child = saChilds.item(i);
-                String nodeName = child.getNodeName();
-                if (nodeName.equals("sourceExpression")) {
-                    Element linkElementNode = document.createElement("linkElement");
-                    linkElementNode.setTextContent(
-                            namespacePrefix
-                                    + ":"
-                                    + domainRelation.getDestinationAttribute().getEntity().getName());
-                    Element linkFieldNode = document.createElement("linkField");
-                    linkFieldNode.setTextContent("FEATURE_LINK[1]");
-                    child.appendChild(linkFieldNode);
-                    child.appendChild(linkElementNode);
-                }
+        String sourceTargetElementValue = namespacePrefix + ":" + domainRelation.getSourceEntity().getName();
+        String sourceTargetAttributeValue = namespacePrefix + ":" + domainRelation.getSourceAttribute().getName();
+        String destinationTargetElementValue = namespacePrefix + ":" + domainRelation.getDestinationEntity().getName();
+
+        domainRelation.accept(this);
+        
+        if (domainRelation.getRelationType() != null) {
+        	
+            String number = Integer.toString(countLinkedAttributeMapping(sourceTargetElementValue));
+            String linkName = "FEATURE_LINK["+number+"]";
+        	
+        	Node sourceAttributeMappingNode = getAttributeMapping(sourceTargetElementValue, sourceTargetAttributeValue);
+            if (sourceAttributeMappingNode != null) {
+            	 NodeList saChilds = sourceAttributeMappingNode.getChildNodes();
+                 for (int i = 0; i < saChilds.getLength(); i++) {
+                     Node child = saChilds.item(i);
+                     String nodeName = child.getNodeName();
+                     if (nodeName.equals("targetAttribute")) {
+                    	 child.setTextContent(linkName);
+                     }
+                 }
             }
-
-            domainRelation.accept(this);
-
-            // add attributeMapping in destination entity
-            String destinationTargetElementValue =
-                    namespacePrefix + ":" + domainRelation.getDestinationEntity().getName();
-            Node destinationFeatureTypeMappingNode =
-                    getFeatureTypeMapping(destinationTargetElementValue);
-            if (destinationFeatureTypeMappingNode != null) {
-                Node linkedAttributeMappingNode =
-                        createAttributeMapping(
-                                "FEATURE_LINK[1]",
-                                domainRelation.getDestinationAttribute().getName());
-                NodeList destFtmChilds = destinationFeatureTypeMappingNode.getChildNodes();
+            Node destinationAttributeMappingNode = getAttributeMapping(destinationTargetElementValue, sourceTargetElementValue);
+            if (destinationAttributeMappingNode == null) {
+            	Node destinationFeatureTypeMappingNode = getFeatureTypeMapping(destinationTargetElementValue);
+            	Node attributeMappingNode = createLinkedAttributeMapping(sourceTargetElementValue, domainRelation.getDestinationAttribute().getName(), sourceTargetElementValue, linkName);
+            	NodeList destFtmChilds = destinationFeatureTypeMappingNode.getChildNodes();
                 for (int i = 0; i < destFtmChilds.getLength(); i++) {
                     Node child = destFtmChilds.item(i);
                     String childName = child.getNodeName();
                     if (childName.equals("attributeMappings")) {
-                        child.appendChild(linkedAttributeMappingNode);
+                        child.appendChild(attributeMappingNode);
                         break;
                     }
                 }
-            } else {
-                throw new RuntimeException(
-                        String.format(
-                                "FeatureTypeMapping '%s' is unknown.",
-                                destinationTargetElementValue));
             }
-
-        } else {
-            throw new RuntimeException(
-                    String.format("AttributeMapping '%s' is unknown.", sourceTargetAttributeValue));
         }
     }
 
@@ -298,6 +278,29 @@ public class SmartAppSchemaDomainModelVisitor extends DomainModelVisitor {
         }
         return null;
     }
+    
+    private Node createLinkedAttributeMapping(String targetAttributeValue, String OCQLValue, String linkedElement, String linkedField) {
+        Element attributeMappingNode = document.createElement("AttributeMapping");
+        Element targetAttributeNode = document.createElement("targetAttribute");
+        targetAttributeNode.setTextContent(targetAttributeValue);
+        Element sourceExpressionNode = document.createElement("sourceExpression");
+        Element OCQLNode = document.createElement("OCQL");
+        OCQLNode.setTextContent(OCQLValue);
+        Element linkElementNode = document.createElement("linkElement");
+        linkElementNode.setTextContent(linkedElement);
+        Element linkFieldNode = document.createElement("linkField");
+        linkFieldNode.setTextContent(linkedField);
+        sourceExpressionNode.appendChild(linkFieldNode);
+        sourceExpressionNode.appendChild(linkElementNode);
+        sourceExpressionNode.appendChild(OCQLNode);
+        Element isMultiple = document.createElement("isMutiple");
+        isMultiple.setTextContent("true");
+        attributeMappingNode.appendChild(isMultiple);
+        attributeMappingNode.appendChild(targetAttributeNode);
+        attributeMappingNode.appendChild(sourceExpressionNode);
+        
+        return attributeMappingNode;
+    }
 
     private Node createAttributeMapping(String targetAttributeValue, String OCQLValue) {
         Element attributeMappingNode = document.createElement("AttributeMapping");
@@ -340,5 +343,36 @@ public class SmartAppSchemaDomainModelVisitor extends DomainModelVisitor {
                     String.format("FeatureTypeMapping '%s' is unknown.", targetElementValue));
         }
         return null;
+    }
+    
+    private int countLinkedAttributeMapping(String targetElementValue) {
+        int ret = 1;
+    	Node featureTypeMappingNode = this.getFeatureTypeMapping(targetElementValue);
+        if (featureTypeMappingNode != null) {
+            NodeList ftmChilds = featureTypeMappingNode.getChildNodes();
+            for (int i = 0; i < ftmChilds.getLength(); i++) {
+                Node ftmChild = ftmChilds.item(i);
+                String ftmChildNodeName = ftmChild.getNodeName();
+                if (ftmChildNodeName.equals("attributeMappings")) {
+                    NodeList attributeMappingList = ftmChild.getChildNodes();
+                    for (int j = 0; j < attributeMappingList.getLength(); j++) {
+                        Node amChild = attributeMappingList.item(j);
+                        NodeList amChildChilds = amChild.getChildNodes();
+                        for (int k = 0; k < amChildChilds.getLength(); k++) {
+                            Node aChild = amChildChilds.item(k);
+                            String nodeName = aChild.getNodeName();
+                            if (nodeName.equals("targetAttribute")) {
+                                if (aChild.getTextContent().contains("FEATURE_LINK"))
+                                    ret++;
+                            }
+                        }
+                    }
+                }
+            }
+        } else {
+            throw new RuntimeException(
+                    String.format("FeatureTypeMapping '%s' is unknown.", targetElementValue));
+        }
+        return ret;
     }
 }

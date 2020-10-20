@@ -7,4 +7,15 @@ station_id
 time
 value
 meteo_observations -> meteo_parameters
+meteo_parameters
+id
+param_name
+param_unit
+meteo_parameters -> meteo_observations
 meteo_observations -> meteo_stations
+meteo_stations
+id
+code
+common_name
+position
+meteo_stations -> meteo_observations

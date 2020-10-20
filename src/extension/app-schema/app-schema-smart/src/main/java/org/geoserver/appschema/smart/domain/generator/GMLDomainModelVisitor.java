@@ -125,7 +125,7 @@ public class GMLDomainModelVisitor extends DomainModelVisitor {
             }
         }
     }
-
+   
     @Override
     public void visit(DomainRelation domainRelation) {
         String propertyType = domainRelation.getDestinationEntity().getName() + "PropertyType";
@@ -139,36 +139,65 @@ public class GMLDomainModelVisitor extends DomainModelVisitor {
                         "gml:AssociationAttributeGroup");
         rootNode.appendChild(complexTypeSequence);
 
-        NodeList complexTypes = rootNode.getElementsByTagName("xs:complexType");
-        for (int i = 0; i < complexTypes.getLength(); i++) {
-            Node nNode = complexTypes.item(i);
-            String complexTypeName = domainRelation.getSourceEntity().getName() + "Type";
-            String nNodeComplexTypeName = nNode.getAttributes().getNamedItem("name").getNodeValue();
-            if (nNodeComplexTypeName.equals(complexTypeName)) {
-                Node sequence = nNode.getFirstChild().getFirstChild().getFirstChild();
-                // update types
-                NodeList elements = sequence.getChildNodes();
-                for (int j = 0; j < elements.getLength(); j++) {
-                    Node element = elements.item(j);
-                    String nNodeElementName =
-                            element.getAttributes().getNamedItem("name").getNodeValue();
-                    if (nNodeElementName.equals(domainRelation.getSourceAttribute().getName())) {
-                        element.getAttributes()
-                                .getNamedItem("type")
-                                .setNodeValue(this.namespacePrefix + ":" + propertyType);
-                        // based on cardinality we need to rewrite minOccurs, maxOccurs
-                        element.getAttributes()
-                                .getNamedItem("minOccurs")
-                                .setNodeValue(getMinOccurs(domainRelation.getRelationType()));
-                        element.getAttributes()
-                                .getNamedItem("maxOccurs")
-                                .setNodeValue(getMaxOccurs(domainRelation.getRelationType()));
-                    }
-                }
-            }
-        }
+        domainRelation.accept(this);        
+        
+        if (domainRelation.getRelationType() != null) {
+	        Node sourceComplexType = this.getComplexTypeByName(domainRelation.getSourceEntity().getName() + "Type");
+	        Node destinationComplexType = this.getComplexTypeByName(domainRelation.getDestinationEntity().getName() + "Type");
+	        
+	        if (domainRelation.getRelationType().equals(DomainRelationType.MANYONE) || domainRelation.getRelationType().equals(DomainRelationType.ONEMANY)) {
+	            Node destSequence = destinationComplexType.getFirstChild().getFirstChild().getFirstChild();
+	            
+	            Node destAttrib = getAttributeElement(destinationComplexType, domainRelation.getSourceEntity().getName());
+	            if (destAttrib == null) {
+		            Element attribute = document.createElement("xs:element");
+		            attribute.setAttribute("name", domainRelation.getSourceEntity().getName());
+		            attribute.setAttribute("type", this.namespacePrefix+":"+domainRelation.getSourceEntity().getName() + "PropertyType");
+		            attribute.setAttribute("minOccurs", "0");
+		            attribute.setAttribute("maxOccurs", "unbounded");
+		            destSequence.appendChild(attribute);
+	            }
 
-        domainRelation.accept(this);
+	            Node sourceSequence = sourceComplexType.getFirstChild().getFirstChild().getFirstChild();
+	            NodeList elements = sourceSequence.getChildNodes();
+	            for (int j = 0; j < elements.getLength(); j++) {
+	            	Node element = elements.item(j);
+	                String nNodeElementName = element.getAttributes().getNamedItem("name").getNodeValue();
+	                if (nNodeElementName.equals(domainRelation.getSourceAttribute().getName())) {
+	                    element.getAttributes()
+	                            .getNamedItem("type")
+	                            .setNodeValue(this.namespacePrefix + ":" + domainRelation.getDestinationEntity().getName() + "PropertyType");
+	                    element.getAttributes()
+	                            .getNamedItem("minOccurs")
+	                            .setNodeValue("1");
+	                    element.getAttributes()
+	                            .getNamedItem("maxOccurs")
+	                            .setNodeValue("1");
+	                }
+	            }
+	        }
+	        
+	        if (domainRelation.getRelationType().equals(DomainRelationType.ONEONE)) {
+	            Node destSequence = destinationComplexType.getFirstChild().getFirstChild().getFirstChild();
+	            NodeList elements = destSequence.getChildNodes();
+	            for (int j = 0; j < elements.getLength(); j++) {
+	            	Node element = elements.item(j);
+	                String nNodeElementName = element.getAttributes().getNamedItem("name").getNodeValue();
+	                if (nNodeElementName.equals(domainRelation.getDestinationAttribute().getName())) {
+	                    element.getAttributes()
+	                            .getNamedItem("type")
+	                            .setNodeValue(this.namespacePrefix + ":" + domainRelation.getSourceEntity().getName() + "PropertyType");
+	                    element.getAttributes()
+	                            .getNamedItem("minOccurs")
+	                            .setNodeValue("1");
+	                    element.getAttributes()
+	                            .getNamedItem("maxOccurs")
+	                            .setNodeValue("1");
+	                }
+	            }
+	        }
+        }
+	            
     }
 
     public Document getDocument() {
@@ -213,16 +242,30 @@ public class GMLDomainModelVisitor extends DomainModelVisitor {
     private String getMaxOccurs(DomainAttributeType type) {
         return "1";
     }
-
-    private String getMinOccurs(DomainRelationType type) {
-        if (type.equals(DomainRelationType.ONEONE)) return "1";
-        if (type.equals(DomainRelationType.MANYONE)) return "0";
-        return "1";
+    
+    private Node getComplexTypeByName(String complexTypeName) {
+        NodeList complexTypes = rootNode.getElementsByTagName("xs:complexType");
+        for (int i = 0; i < complexTypes.getLength(); i++) {
+            Node nNode = complexTypes.item(i);
+	            String nNodeComplexTypeName = nNode.getAttributes().getNamedItem("name").getNodeValue();
+	            if (nNodeComplexTypeName.equals(complexTypeName)) {
+	                return nNode;
+	            }
+        }
+    	return null;
     }
 
-    private String getMaxOccurs(DomainRelationType type) {
-        if (type.equals(DomainRelationType.ONEONE)) return "1";
-        if (type.equals(DomainRelationType.MANYONE)) return "unbounded";
-        return "1";
+    private Node getAttributeElement(Node complexType, String name) {
+    	Node sequence = complexType.getFirstChild().getFirstChild().getFirstChild();
+    	NodeList elements = sequence.getChildNodes();
+        for (int j = 0; j < elements.getLength(); j++) {
+        	Node element = elements.item(j);
+            String nNodeElementName = element.getAttributes().getNamedItem("name").getNodeValue();
+            if (nNodeElementName.equals(name)) {
+            	return element;
+            }
+        }
+    	return null;
     }
+    
 }

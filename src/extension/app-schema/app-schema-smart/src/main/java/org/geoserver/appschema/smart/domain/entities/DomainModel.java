@@ -14,7 +14,7 @@ public class DomainModel {
 
     private final DataStoreMetadata dataStoreMetadata;
     private final DomainEntity rootEntity;
-
+    
     public DomainModel(DataStoreMetadata dataStoreMetadata, DomainEntity rootEntity) {
         this.dataStoreMetadata = dataStoreMetadata;
         this.rootEntity = rootEntity;
@@ -27,4 +27,9 @@ public class DomainModel {
         visitor.visit(dataStoreMetadata);
         visitor.visit(rootEntity);
     }
+    
+    public DomainEntity getRootEntity() {
+    	return rootEntity;
+    }
+    
 }
