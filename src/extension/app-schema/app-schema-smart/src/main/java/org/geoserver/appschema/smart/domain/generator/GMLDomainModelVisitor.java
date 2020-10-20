@@ -2,11 +2,13 @@ package org.geoserver.appschema.smart.domain.generator;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import org.geoserver.appschema.smart.domain.DomainModelVisitor;
-import org.geoserver.appschema.smart.domain.entities.DomainAttribute;
+
+import org.geoserver.appschema.smart.domain.DomainModelVisitorImpl;
+import org.geoserver.appschema.smart.domain.entities.DomainEntityAttribute;
 import org.geoserver.appschema.smart.domain.entities.DomainAttributeType;
 import org.geoserver.appschema.smart.domain.entities.DomainEntity;
 import org.geoserver.appschema.smart.domain.entities.DomainModel;
@@ -23,7 +25,7 @@ import org.w3c.dom.NodeList;
  *
  * @author Jose Macchi - Geosolutions
  */
-public class GMLDomainModelVisitor extends DomainModelVisitor {
+public class GMLDomainModelVisitor extends DomainModelVisitorImpl {
 
     private static final Map<DomainAttributeType, String> GMLDataTypesMappings = new HashMap<>();
 
@@ -41,6 +43,7 @@ public class GMLDomainModelVisitor extends DomainModelVisitor {
     private Element rootNode;
 
     private final Map<String, DomainEntity> domainEntitiesIndex = new HashMap<>();
+    private final Map<String, DomainRelation> domainRelationsIndex = new HashMap<>();
 
     public GMLDomainModelVisitor(String namespacePrefix, String targetNamespace) {
         docBuilder = null;
@@ -72,16 +75,6 @@ public class GMLDomainModelVisitor extends DomainModelVisitor {
     }
 
     @Override
-    public void visit(DataStoreMetadata dataStoreMetadata) {
-        // nothing to map from DataStore in GML mappings
-    }
-
-    @Override
-    public void visit(DomainModel domainModel) {
-        // nothing to do in GML
-    }
-
-    @Override
     public void visit(DomainEntity domainEntity) {
         DomainEntity candidateDomainEntity = domainEntitiesIndex.get(domainEntity.getName());
         if (candidateDomainEntity != null) {
@@ -106,7 +99,7 @@ public class GMLDomainModelVisitor extends DomainModelVisitor {
     }
 
     @Override
-    public void visit(DomainAttribute domainAttribute) {
+    public void visit(DomainEntityAttribute domainAttribute) {
         NodeList complexTypes = rootNode.getElementsByTagName("xs:complexType");
         for (int i = 0; i < complexTypes.getLength(); i++) {
             Node nNode = complexTypes.item(i);
@@ -126,55 +119,79 @@ public class GMLDomainModelVisitor extends DomainModelVisitor {
         }
     }
    
+    private String getDomainRelationKey(DomainRelation dm) {
+    	String retVal = dm.getSourceEntity().getName()+"."+dm.getSourceAttribute()+"-"+dm.getRelationType()+"-"+dm.getDestinationEntity()+"."+dm.getDestinationAttribute();
+    	return retVal;
+    }
+    
+    private String getInvertedDomainRelationKey(DomainRelation dm) {
+    	DomainRelationType type = dm.getRelationType();
+    	if (dm.getRelationType().equals(DomainRelationType.ONEMANY))
+    		type = DomainRelationType.MANYONE;
+    	String retVal = dm.getDestinationEntity()+"."+dm.getDestinationAttribute()+"-"+type+"-"+dm.getSourceEntity().getName()+"."+dm.getSourceAttribute();
+    	return retVal;
+    }
+    
     @Override
     public void visit(DomainRelation domainRelation) {
-        String propertyType = domainRelation.getDestinationEntity().getName() + "PropertyType";
-        Node complexTypeSequence =
-                createComplexTypeSequenceNode(
-                        propertyType,
-                        0,
-                        this.namespacePrefix
-                                + ":"
-                                + domainRelation.getDestinationEntity().getName(),
-                        "gml:AssociationAttributeGroup");
-        rootNode.appendChild(complexTypeSequence);
-
-        domainRelation.accept(this);        
+    	String dmKey = getDomainRelationKey(domainRelation);
+    	DomainRelation candidateDomainRelation = domainRelationsIndex.get(dmKey);
+        if (candidateDomainRelation != null) {
+            // we are done, we already visit this domainRelation
+            return;
+        }
+    	
+        domainRelationsIndex.put(dmKey, domainRelation);
+    	domainRelation.accept(this);        
         
         if (domainRelation.getRelationType() != null) {
-	        Node sourceComplexType = this.getComplexTypeByName(domainRelation.getSourceEntity().getName() + "Type");
+
+        	String propertyType = domainRelation.getSourceEntity().getName() + "PropertyType";
+            Node complexPropertyType = this.getComplexTypeByName(propertyType);
+            if (complexPropertyType == null) {
+                Node complexTypeSequence =
+                        createComplexTypeSequenceNode(
+                                propertyType,
+                                0,
+                                this.namespacePrefix
+                                        + ":"
+                                        + domainRelation.getSourceEntity().getName(),
+                                "gml:AssociationAttributeGroup");
+                rootNode.appendChild(complexTypeSequence);
+            }        	
+        	
+        	Node sourceComplexType = this.getComplexTypeByName(domainRelation.getSourceEntity().getName() + "Type");
 	        Node destinationComplexType = this.getComplexTypeByName(domainRelation.getDestinationEntity().getName() + "Type");
 	        
-	        if (domainRelation.getRelationType().equals(DomainRelationType.MANYONE) || domainRelation.getRelationType().equals(DomainRelationType.ONEMANY)) {
-	            Node destSequence = destinationComplexType.getFirstChild().getFirstChild().getFirstChild();
-	            
-	            Node destAttrib = getAttributeElement(destinationComplexType, domainRelation.getSourceEntity().getName());
-	            if (destAttrib == null) {
+	        if (domainRelation.getRelationType().equals(DomainRelationType.ONEMANY)) {
+	            Node srcAttribSeq = sourceComplexType.getFirstChild().getFirstChild().getFirstChild();
+	            if (srcAttribSeq != null) {
 		            Element attribute = document.createElement("xs:element");
-		            attribute.setAttribute("name", domainRelation.getSourceEntity().getName());
-		            attribute.setAttribute("type", this.namespacePrefix+":"+domainRelation.getSourceEntity().getName() + "PropertyType");
+		            attribute.setAttribute("name", domainRelation.getDestinationEntity().getName());
+		            attribute.setAttribute("type", this.namespacePrefix+":"+domainRelation.getDestinationEntity().getName() + "PropertyType");
 		            attribute.setAttribute("minOccurs", "0");
 		            attribute.setAttribute("maxOccurs", "unbounded");
-		            destSequence.appendChild(attribute);
+		            srcAttribSeq.appendChild(attribute);
 	            }
-
-	            Node sourceSequence = sourceComplexType.getFirstChild().getFirstChild().getFirstChild();
-	            NodeList elements = sourceSequence.getChildNodes();
-	            for (int j = 0; j < elements.getLength(); j++) {
-	            	Node element = elements.item(j);
-	                String nNodeElementName = element.getAttributes().getNamedItem("name").getNodeValue();
-	                if (nNodeElementName.equals(domainRelation.getSourceAttribute().getName())) {
-	                    element.getAttributes()
-	                            .getNamedItem("type")
-	                            .setNodeValue(this.namespacePrefix + ":" + domainRelation.getDestinationEntity().getName() + "PropertyType");
-	                    element.getAttributes()
-	                            .getNamedItem("minOccurs")
-	                            .setNodeValue("1");
-	                    element.getAttributes()
-	                            .getNamedItem("maxOccurs")
-	                            .setNodeValue("1");
-	                }
-	            }
+	            
+	            Node destAttribute = this.getAttributeElement(destinationComplexType,domainRelation.getDestinationAttribute().getName());
+	            destAttribute.getParentNode().removeChild(destAttribute);
+	        }
+	        
+	        if (domainRelation.getRelationType().equals(DomainRelationType.MANYONE)) {
+	        	// if the opposite relation was already visited then not to add to source
+	        	if (domainRelationsIndex.containsKey(this.getInvertedDomainRelationKey(domainRelation))) {
+		        	// add to source
+		        	Node srcAttribSeq = sourceComplexType.getFirstChild().getFirstChild().getFirstChild();
+		            if (srcAttribSeq != null) {
+				            Element attribute = document.createElement("xs:element");
+				            attribute.setAttribute("name", domainRelation.getDestinationEntity().getName());
+				            attribute.setAttribute("type", this.namespacePrefix+":"+domainRelation.getDestinationEntity().getName() + "PropertyType");
+				            attribute.setAttribute("minOccurs", "1");
+				            attribute.setAttribute("maxOccurs", "1");
+				            srcAttribSeq.appendChild(attribute);
+		            }
+	        	}
 	        }
 	        
 	        if (domainRelation.getRelationType().equals(DomainRelationType.ONEONE)) {
@@ -196,6 +213,7 @@ public class GMLDomainModelVisitor extends DomainModelVisitor {
 	                }
 	            }
 	        }
+	        
         }
 	            
     }

@@ -2,11 +2,12 @@ package org.geoserver.appschema.smart.domain;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.geoserver.appschema.smart.domain.entities.DomainAttribute;
+import org.geoserver.appschema.smart.domain.entities.DomainEntityAttribute;
 import org.geoserver.appschema.smart.domain.entities.DomainAttributeType;
 import org.geoserver.appschema.smart.domain.entities.DomainEntity;
 import org.geoserver.appschema.smart.domain.entities.DomainModel;
 import org.geoserver.appschema.smart.domain.entities.DomainRelation;
+import org.geoserver.appschema.smart.domain.entities.DomainRelationType;
 import org.geoserver.appschema.smart.metadata.AttributeMetadata;
 import org.geoserver.appschema.smart.metadata.DataStoreMetadata;
 import org.geoserver.appschema.smart.metadata.EntityMetadata;
@@ -58,7 +59,7 @@ public final class DomainModelBuilder {
                     .getAttributes()
                     .forEach(
                             attributeMetadata -> {
-                                DomainAttribute domainAttribute =
+                                DomainEntityAttribute domainAttribute =
                                         buildDomainAttribute(attributeMetadata);
                                 domainEntity.add(domainAttribute);
                             });
@@ -67,12 +68,23 @@ public final class DomainModelBuilder {
                     .forEach(
                             relationMetadata -> {
                                 DomainRelation domainRelation = new DomainRelation();
-                                domainRelation.setDestinationAttribute(
-                                        buildDomainAttribute(
-                                                relationMetadata.getDestinationAttribute()));
-                                domainRelation.setSourceAttribute(
-                                        buildDomainAttribute(
-                                                relationMetadata.getSourceAttribute()));
+                                
+                                if (relationMetadata.getRelationType().equals(DomainRelationType.ONEMANY)) {
+                                    domainRelation.setDestinationAttribute(
+                                            buildDomainAttribute(
+                                                    relationMetadata.getSourceAttribute()));
+                                    domainRelation.setSourceAttribute(
+                                            buildDomainAttribute(
+                                                    relationMetadata.getDestinationAttribute()));
+                                	
+                                } else  {
+                                    domainRelation.setDestinationAttribute(
+                                            buildDomainAttribute(
+                                                    relationMetadata.getDestinationAttribute()));
+                                    domainRelation.setSourceAttribute(
+                                            buildDomainAttribute(
+                                                    relationMetadata.getSourceAttribute()));
+                                }
                                 domainRelation.setRelationType(relationMetadata.getRelationType());
                                 domainEntity.add(domainRelation);
                             });
@@ -82,8 +94,8 @@ public final class DomainModelBuilder {
         return null;
     }
 
-    private DomainAttribute buildDomainAttribute(AttributeMetadata attributeMetadata) {
-        DomainAttribute domainAttribute = new DomainAttribute();
+    private DomainEntityAttribute buildDomainAttribute(AttributeMetadata attributeMetadata) {
+        DomainEntityAttribute domainAttribute = new DomainEntityAttribute();
         domainAttribute.setName(attributeMetadata.getName());
         domainAttribute.setType(DomainAttributeType.TEXT);
         domainAttribute.setEntity(

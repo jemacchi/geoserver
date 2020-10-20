@@ -139,5 +139,31 @@ public final class GMLDomainModelVisitorTest extends SmartAppSchemaPostgisTestSu
 
         metaData.getConnection().close();
     }
+
+    @Test
+    public void testParametersRootEntity() throws Exception {
+        DatabaseMetaData metaData = this.setup.getDataSource().getConnection().getMetaData();
+        DataStoreMetadata dsm = this.getDataStoreMetadata(metaData);
+        DomainModelConfig dmc = new DomainModelConfig();
+        dmc.setRootEntityName("meteo_parameters");
+        DomainModelBuilder dmb = new DomainModelBuilder(dsm, dmc);
+        DomainModel dm = dmb.getDomainModel();
+        GMLDomainModelVisitor dmv = new GMLDomainModelVisitor(NAMESPACE_PREFIX, TARGET_NAMESPACE);
+        dm.accept(dmv);
+
+        SmartAppSchemaTestHelper.saveDocumentToFile(dmv.getDocument(), "/home/jmacchi/meteo-parameters-gml.xsd");
+        /*InputStream is =
+                SmartAppSchemaTestHelper.getFileFromResourceAsStream("meteo-stations-gml.xsd");
+        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+        Document control = dBuilder.parse(is);
+        XMLUnit.setIgnoreWhitespace(true);
+        XMLUnit.setIgnoreComments(true);
+        Diff d = XMLUnit.compareXML(control, dmv.getDocument());
+
+        assertEquals(true, d.similar());*/
+
+        metaData.getConnection().close();
+    }
     
 }

@@ -4,15 +4,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.geoserver.appschema.smart.domain.DomainModelVisitor;
-import org.geoserver.appschema.smart.domain.entities.DomainAttribute;
+import org.geoserver.appschema.smart.domain.DomainModelVisitorImpl;
+import org.geoserver.appschema.smart.domain.entities.DomainEntityAttribute;
 import org.geoserver.appschema.smart.domain.entities.DomainEntity;
 import org.geoserver.appschema.smart.domain.entities.DomainModel;
 import org.geoserver.appschema.smart.domain.entities.DomainRelation;
 import org.geoserver.appschema.smart.metadata.DataStoreMetadata;
 import org.geotools.util.logging.Logging;
 
-public class LoggerDomainModelVisitor extends DomainModelVisitor {
+public class LoggerDomainModelVisitor extends DomainModelVisitorImpl {
 
     private static final Logger LOGGER = Logging.getLogger(LoggerDomainModelVisitor.class);
     private StringBuilder internalLogger = new StringBuilder();
@@ -50,7 +50,7 @@ public class LoggerDomainModelVisitor extends DomainModelVisitor {
     }
 
     @Override
-    public void visit(DomainAttribute domainAttribute) {
+    public void visit(DomainEntityAttribute domainAttribute) {
         String da = domainAttribute.getName();
         LOGGER.log(Level.INFO, domainAttribute.getName());
         internalLogger.append(da + "\n");

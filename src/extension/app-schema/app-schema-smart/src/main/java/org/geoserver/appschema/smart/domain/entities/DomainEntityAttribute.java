@@ -5,7 +5,7 @@ package org.geoserver.appschema.smart.domain.entities;
  *
  * @author Jose Macchi - Geosolutions
  */
-public final class DomainAttribute {
+public final class DomainEntityAttribute {
 
     private String name;
     private DomainAttributeType type;

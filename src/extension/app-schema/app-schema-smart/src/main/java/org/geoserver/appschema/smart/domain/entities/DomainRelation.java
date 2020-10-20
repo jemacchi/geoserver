@@ -1,6 +1,6 @@
 package org.geoserver.appschema.smart.domain.entities;
 
-import org.geoserver.appschema.smart.domain.DomainModelVisitor;
+import org.geoserver.appschema.smart.domain.DomainModelVisitorImpl;
 
 /**
  * Class representing a relation between two entities on the Smart AppSchema model.
@@ -9,8 +9,8 @@ import org.geoserver.appschema.smart.domain.DomainModelVisitor;
  */
 public final class DomainRelation {
 
-    private DomainAttribute sourceAttribute;
-    private DomainAttribute destinationAttribute;
+    private DomainEntityAttribute sourceAttribute;
+    private DomainEntityAttribute destinationAttribute;
 
     private DomainRelationType relationType;
 
@@ -30,24 +30,24 @@ public final class DomainRelation {
         this.relationType = relationType;
     }
 
-    public void accept(DomainModelVisitor visitor) {
+    public void accept(DomainModelVisitorImpl visitor) {
         visitor.visit(this.getSourceEntity());
         visitor.visit(this.getDestinationEntity());
     }
 
-    public DomainAttribute getSourceAttribute() {
+    public DomainEntityAttribute getSourceAttribute() {
         return sourceAttribute;
     }
 
-    public void setSourceAttribute(DomainAttribute sourceAttribute) {
+    public void setSourceAttribute(DomainEntityAttribute sourceAttribute) {
         this.sourceAttribute = sourceAttribute;
     }
 
-    public DomainAttribute getDestinationAttribute() {
+    public DomainEntityAttribute getDestinationAttribute() {
         return destinationAttribute;
     }
 
-    public void setDestinationAttribute(DomainAttribute destinationAttribute) {
+    public void setDestinationAttribute(DomainEntityAttribute destinationAttribute) {
         this.destinationAttribute = destinationAttribute;
     }
 }

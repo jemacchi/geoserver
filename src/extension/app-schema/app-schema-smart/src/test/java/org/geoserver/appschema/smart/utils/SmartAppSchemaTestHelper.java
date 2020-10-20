@@ -32,7 +32,7 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.geoserver.appschema.smart.domain.DomainModelVisitor;
+import org.geoserver.appschema.smart.domain.DomainModelVisitorImpl;
 import org.geoserver.appschema.smart.domain.entities.DomainModel;
 import org.geoserver.appschema.smart.metadata.AttributeMetadata;
 import org.geoserver.appschema.smart.metadata.EntityMetadata;
@@ -68,7 +68,7 @@ public class SmartAppSchemaTestHelper {
     }
 
     public static <T> void printDomainModel(DomainModel dm) {
-        DomainModelVisitor dmv = new LoggerDomainModelVisitor();
+        DomainModelVisitorImpl dmv = new LoggerDomainModelVisitor();
         if (dm != null) {
             dm.accept(dmv);
         }

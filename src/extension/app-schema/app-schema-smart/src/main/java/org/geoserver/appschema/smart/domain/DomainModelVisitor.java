@@ -1,26 +1,27 @@
 package org.geoserver.appschema.smart.domain;
 
-import org.geoserver.appschema.smart.domain.entities.DomainAttribute;
+import org.geoserver.appschema.smart.domain.entities.DomainEntityAttribute;
 import org.geoserver.appschema.smart.domain.entities.DomainEntity;
 import org.geoserver.appschema.smart.domain.entities.DomainModel;
 import org.geoserver.appschema.smart.domain.entities.DomainRelation;
 import org.geoserver.appschema.smart.metadata.DataStoreMetadata;
 
-/**
- * Smart AppSchema model objects visitor interface. Defined with the purpose of accessing elements
- * on model and visiting them in order to build output structure data.
- *
- * @author Jose Macchi - Geosolutions
- */
-public abstract class DomainModelVisitor {
+public interface DomainModelVisitor {
+	
+	void visitDataStoreMetadata(DataStoreMetadata dataStoreMetadata);
 
-    public abstract void visit(DataStoreMetadata dataStoreMetadata);
+    void visitDomainModel(DomainModel model);
 
-    public abstract void visit(DomainModel domainModel);
+    void visitDomainEntity(DomainEntity entity);
 
-    public abstract void visit(DomainEntity domainEntity);
+    void visitDomainEntityAttribute(DomainEntityAttribute attribute);
 
-    public abstract void visit(DomainAttribute domainAttribute);
+    void visitDomainRelation(DomainRelation relation);
+    
+    void visitDomainRootEntity(DomainEntity entity);
+    
+    void visitRelationSourceEntity(DomainEntity source, DomainEntity target);
+    
+    void visitRelationTargetEntity(DomainEntity source, DomainEntity target);
 
-    public abstract void visit(DomainRelation domainRelation);
 }

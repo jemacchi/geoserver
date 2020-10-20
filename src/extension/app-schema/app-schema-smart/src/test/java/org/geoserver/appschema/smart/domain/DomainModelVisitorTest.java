@@ -3,6 +3,7 @@ package org.geoserver.appschema.smart.domain;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.sql.DatabaseMetaData;
+
 import org.apache.commons.io.IOUtils;
 import org.geoserver.appschema.smart.SmartAppSchemaPostgisTestSupport;
 import org.geoserver.appschema.smart.domain.entities.DomainModel;

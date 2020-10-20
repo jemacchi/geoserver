@@ -6,8 +6,8 @@ import java.util.Set;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import org.geoserver.appschema.smart.domain.DomainModelVisitor;
-import org.geoserver.appschema.smart.domain.entities.DomainAttribute;
+import org.geoserver.appschema.smart.domain.DomainModelVisitorImpl;
+import org.geoserver.appschema.smart.domain.entities.DomainEntityAttribute;
 import org.geoserver.appschema.smart.domain.entities.DomainEntity;
 import org.geoserver.appschema.smart.domain.entities.DomainModel;
 import org.geoserver.appschema.smart.domain.entities.DomainRelation;
@@ -22,7 +22,7 @@ import org.w3c.dom.NodeList;
  *
  * @author Jose Macchi - Geosolutions
  */
-public class SmartAppSchemaDomainModelVisitor extends DomainModelVisitor {
+public class SmartAppSchemaDomainModelVisitor extends DomainModelVisitorImpl {
 
     private String namespacePrefix = "";
     private String schemaUri = "";
@@ -111,7 +111,7 @@ public class SmartAppSchemaDomainModelVisitor extends DomainModelVisitor {
     }
 
     @Override
-    public void visit(DomainAttribute domainAttribute) {
+    public void visit(DomainEntityAttribute domainAttribute) {
         String targetElementValue = namespacePrefix + ":" + domainAttribute.getEntity().getName();
         // Find the featureTypeMapping with that targetElementValue
         Node featureTypeMapping = getFeatureTypeMapping(targetElementValue);

@@ -2,7 +2,7 @@ package org.geoserver.appschema.smart.domain.entities;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.geoserver.appschema.smart.domain.DomainModelVisitor;
+import org.geoserver.appschema.smart.domain.DomainModelVisitorImpl;
 
 /**
  * Class representing an entity on the Smart AppSchema model.
@@ -12,7 +12,7 @@ import org.geoserver.appschema.smart.domain.DomainModelVisitor;
 public final class DomainEntity {
 
     private String name;
-    private final List<DomainAttribute> attributes = new ArrayList<>();
+    private final List<DomainEntityAttribute> attributes = new ArrayList<>();
     private final List<DomainRelation> relations = new ArrayList<>();
 
     public String getName() {
@@ -23,7 +23,7 @@ public final class DomainEntity {
         this.name = name;
     }
 
-    public List<DomainAttribute> getAttributes() {
+    public List<DomainEntityAttribute> getAttributes() {
         return attributes;
     }
 
@@ -31,7 +31,7 @@ public final class DomainEntity {
         return relations;
     }
 
-    public void add(DomainAttribute attribute) {
+    public void add(DomainEntityAttribute attribute) {
         attributes.add(attribute);
     }
 
@@ -39,7 +39,7 @@ public final class DomainEntity {
         relations.add(relation);
     }
 
-    public void accept(DomainModelVisitor visitor) {
+    public void accept(DomainModelVisitorImpl visitor) {
         attributes.forEach(visitor::visit);
         relations.forEach(visitor::visit);
     }
