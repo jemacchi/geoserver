@@ -9,7 +9,7 @@ import org.geoserver.appschema.smart.metadata.AttributeMetadata;
  * particular kind of Column, keeping a mapping with another related column (at same entity or
  * other)
  *
- * @author Jose Macchi - Geosolutions
+ * @author Jose Macchi - GeoSolutions
  */
 public class JdbcForeignKeyColumnMetadata extends JdbcColumnMetadata {
     private final JdbcColumnMetadata relatedColumn;
@@ -19,7 +19,7 @@ public class JdbcForeignKeyColumnMetadata extends JdbcColumnMetadata {
             String columnName,
             String columnType,
             JdbcColumnMetadata relatedColumn) {
-        super(table, columnName, columnType);
+        super(table, columnName, columnType, true);
         this.relatedColumn = relatedColumn;
     }
 

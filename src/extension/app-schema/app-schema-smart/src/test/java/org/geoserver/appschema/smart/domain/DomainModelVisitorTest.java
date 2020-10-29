@@ -15,7 +15,7 @@ import org.junit.Test;
 /**
  * Tests related to a simple DomainModelVisitor (which logs DomainModel visited nodes)
  *
- * @author Jose Macchi - Geosolutions
+ * @author Jose Macchi - GeoSolutions
  */
 public final class DomainModelVisitorTest extends SmartAppSchemaPostgisTestSupport {
 
@@ -26,17 +26,16 @@ public final class DomainModelVisitorTest extends SmartAppSchemaPostgisTestSuppo
         DomainModelConfig dmc = new DomainModelConfig();
         dmc.setRootEntityName("meteo_stations");
         DomainModelBuilder dmb = new DomainModelBuilder(dsm, dmc);
-        DomainModel dm = dmb.getDomainModel();
+        DomainModel dm = dmb.buildDomainModel();
         LoggerDomainModelVisitor dmv = new LoggerDomainModelVisitor();
         dm.accept(dmv);
 
         InputStream is =
-                SmartAppSchemaTestHelper.getFileFromResourceAsStream(
+                SmartAppSchemaTestHelper.getResourceAsStream(
                         "meteo-stations-logvisitor.txt");
         String expected = IOUtils.toString(is, StandardCharsets.UTF_8);
         assertEquals(expected, dmv.getLog());
 
-        metaData.getConnection().close();
     }
 
     @Test
@@ -46,16 +45,15 @@ public final class DomainModelVisitorTest extends SmartAppSchemaPostgisTestSuppo
         DomainModelConfig dmc = new DomainModelConfig();
         dmc.setRootEntityName("meteo_observations");
         DomainModelBuilder dmb = new DomainModelBuilder(dsm, dmc);
-        DomainModel dm = dmb.getDomainModel();
+        DomainModel dm = dmb.buildDomainModel();
         LoggerDomainModelVisitor dmv = new LoggerDomainModelVisitor();
         dm.accept(dmv);
-
+        
         InputStream is =
-                SmartAppSchemaTestHelper.getFileFromResourceAsStream(
+                SmartAppSchemaTestHelper.getResourceAsStream(
                         "meteo-observations-logvisitor.txt");
         String expected = IOUtils.toString(is, StandardCharsets.UTF_8);
         assertEquals(expected, dmv.getLog());
 
-        metaData.getConnection().close();
     }
 }

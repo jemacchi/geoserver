@@ -1,60 +1,58 @@
 package org.geoserver.appschema.smart;
 
-import java.io.File;
+import java.nio.charset.Charset;
 import java.sql.DatabaseMetaData;
-import java.util.HashMap;
-import java.util.Map;
 
+import org.apache.commons.io.IOUtils;
 import org.geoserver.appschema.smart.metadata.DataStoreMetadata;
 import org.geoserver.appschema.smart.metadata.DataStoreMetadataConfig;
 import org.geoserver.appschema.smart.metadata.DataStoreMetadataFactory;
 import org.geoserver.appschema.smart.metadata.jdbc.JdbcDataStoreMetadataConfig;
 import org.geoserver.appschema.smart.metadata.jdbc.SmartAppSchemaPostgisTestSetup;
 import org.geoserver.appschema.smart.utils.SmartAppSchemaTestHelper;
-import org.geoserver.test.onlineTest.setup.AppSchemaTestPostgisSetup;
 import org.geotools.jdbc.JDBCTestSetup;
 import org.geotools.jdbc.JDBCTestSupport;
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
 
-public class SmartAppSchemaPostgisTestSupport extends JDBCTestSupport {
+public abstract class SmartAppSchemaPostgisTestSupport extends JDBCTestSupport {
 
-    protected String SCHEMA = "meteo";
+    protected String SCHEMA = SmartAppSchemaPostgisTestSetup.ONLINE_DB_SCHEMA;
     protected String NAMESPACE_PREFIX = "mt";
     protected String TARGET_NAMESPACE = "http://www.geo-solutions.it/smartappschema/1.0";
-
-    protected String CONNECTION_PASSWORD = "docker";
+    protected String MOCK_SQL_SCRIPT="meteo_db.sql";
 
     protected DataStoreMetadata getDataStoreMetadata(DatabaseMetaData metaData) throws Exception {
-        String driver = "org.postgresql.Driver";
-        String user = metaData.getConnection().getMetaData().getUserName();
-        String url = metaData.getConnection().getMetaData().getURL();
-        String pass = CONNECTION_PASSWORD;
         DataStoreMetadataConfig config =
-                new JdbcDataStoreMetadataConfig(SCHEMA, driver, url, user, pass, null, SCHEMA);
+                new JdbcDataStoreMetadataConfig(SCHEMA, metaData.getConnection(), null, SCHEMA);
         DataStoreMetadata dsm = (new DataStoreMetadataFactory()).getDataStoreMetadata(config);
         return dsm;
     }
+    
+
+    /**
+     * Helper method that allows to remove sourceDataStore node from AppSchema xml doc.
+     * Useful to clean xml docs when required to compare assertXML (since those sections of documents contains
+     * specific information from dataStores based on JDBC Connection, it's required to avoid the comparision. 
+     * @param appSchemaDoc
+     */
+    protected void removeSourceDataStoresNode(Document appSchemaDoc) {
+		NodeList sds = appSchemaDoc.getElementsByTagName("sourceDataStores");
+		if (sds != null && sds.getLength() > 0) {
+			sds.item(0).getParentNode().removeChild(sds.item(0));	
+		}
+	}
 
     @Override
     protected JDBCTestSetup createTestSetup() {
-    	
-    	// TODO: set list of files that contains my "database"
-    	/*Map<String,File> propertyFiles = new HashMap<String, File>();
-    	File f = SmartAppSchemaTestHelper.getResourceAsFile("mockdata/meteo_observations.properties");
-    	propertyFiles.put("meteo_observations.properties", f);
-    	
-        try {
-            return AppSchemaTestPostgisSetup.getInstance(propertyFiles);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-        */
-    	try {
-            return new SmartAppSchemaPostgisTestSetup();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-
-    }
+		String sql;
+		try {
+			sql = IOUtils.toString(SmartAppSchemaTestHelper.getResourceAsStream("mockdata/"+MOCK_SQL_SCRIPT), Charset.defaultCharset());
+			return SmartAppSchemaPostgisTestSetup.getInstance(sql);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+    }   
+    
 }

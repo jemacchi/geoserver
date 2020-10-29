@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * Class that represents metadata for entities on the underlying DataStore model.
  *
- * @author Jose Macchi - Geosolutions
+ * @author Jose Macchi - GeoSolutions
  */
 public abstract class EntityMetadata implements Comparable<EntityMetadata> {
 

@@ -7,12 +7,12 @@ import org.geoserver.appschema.smart.metadata.AttributeMetadata;
 /**
  * Class representing metadata for a column (entity's attribute) in a JDBC DataStore.
  *
- * @author Jose Macchi - Geosolutions
+ * @author Jose Macchi - GeoSolutions
  */
 public class JdbcColumnMetadata extends AttributeMetadata implements JdbcConnectable {
 
-    public JdbcColumnMetadata(JdbcTableMetadata table, String columnName, String columnType) {
-        super(table, columnName, columnType);
+    public JdbcColumnMetadata(JdbcTableMetadata table, String columnName, String columnType, boolean externalReference) {
+        super(table, columnName, columnType, externalReference);
     }
 
     @Override

@@ -6,7 +6,7 @@ import org.geoserver.appschema.smart.domain.entities.DomainRelationType;
 /**
  * Class that represents metadata for relations between entities on the underlying DataStore model.
  *
- * @author Jose Macchi - Geosolutions
+ * @author Jose Macchi - GeoSolutions
  */
 public abstract class RelationMetadata implements Comparable<RelationMetadata> {
 
@@ -21,12 +21,12 @@ public abstract class RelationMetadata implements Comparable<RelationMetadata> {
         this.destinationAttribute = destination;
     }
 
-    public boolean participatesIn(EntityMetadata e) {
-        if ((sourceAttribute.getEntity().compareTo(e) == 0)
-                || (destinationAttribute.getEntity().compareTo(e) == 0)) return true;
+    public boolean participatesInRelation(String entityMetadataName) {
+        if (sourceAttribute.getEntity().getName().equals(entityMetadataName) 
+            || destinationAttribute.getEntity().getName().equals(entityMetadataName)) return true;
         return false;
     }
-
+    
     public AttributeMetadata getSourceAttribute() {
         return this.sourceAttribute;
     }

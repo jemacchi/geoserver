@@ -1,11 +1,9 @@
 package org.geoserver.appschema.smart.metadata.jdbc.constraint;
 
+import com.google.common.collect.ComparisonChain;
 import java.util.Objects;
-
 import org.geoserver.appschema.smart.metadata.ConstraintMetadata;
 import org.geoserver.appschema.smart.metadata.jdbc.JdbcTableMetadata;
-
-import com.google.common.collect.ComparisonChain;
 
 /**
  * Class representing metadata for a constraint type foreignkey in a JDBC DataStore.
@@ -38,11 +36,12 @@ public class JdbcForeignKeyConstraintMetadata extends JdbcTableConstraintMetadat
                 (JdbcForeignKeyConstraintMetadata) object;
         return this.compareTo(foreignKeyConstraint) == 0;
     }
-    
+
     @Override
     public int compareTo(ConstraintMetadata tableConstraint) {
         if (tableConstraint != null) {
-        	JdbcForeignKeyConstraintMetadata tc = (JdbcForeignKeyConstraintMetadata) tableConstraint;
+            JdbcForeignKeyConstraintMetadata tc =
+                    (JdbcForeignKeyConstraintMetadata) tableConstraint;
             return ComparisonChain.start()
                     .compare(this.getTable(), tc.getTable())
                     .compare(this.getName(), tc.getName())
@@ -60,10 +59,10 @@ public class JdbcForeignKeyConstraintMetadata extends JdbcTableConstraintMetadat
     public JdbcTableMetadata getRelatedTable() {
         return relatedTable;
     }
-    
+
     public boolean referencesTo(JdbcTableMetadata table) {
-    	if (table != null && (table.equals(relatedTable) || table.equals(this.getTable())))
-    		return true;
-    	return false;
+        if (table != null && (table.equals(relatedTable) || table.equals(this.getTable())))
+            return true;
+        return false;
     }
 }

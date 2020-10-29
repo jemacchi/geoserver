@@ -5,14 +5,15 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
-import org.geoserver.appschema.smart.domain.metadata.jdbc.utils.JdbcUrlSplitter;
+
 import org.geoserver.appschema.smart.metadata.DataStoreMetadataConfig;
+import org.geoserver.appschema.smart.metadata.jdbc.utils.JdbcUrlSplitter;
 
 /**
  * Configuration class that keeps specific information related to DataStoreMetadata for JDBCs
  * connections.
  *
- * @author Jose Macchi - Geosolutions
+ * @author Jose Macchi - GeoSolutions
  */
 public class JdbcDataStoreMetadataConfig extends DataStoreMetadataConfig {
 

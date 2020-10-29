@@ -6,7 +6,7 @@ import org.geoserver.appschema.smart.metadata.jdbc.constraint.JdbcPrimaryKeyCons
  * Helper for testing purposes. Represent primary keys results extracted from JDBC dataStores
  * (metadata access using JdbcHelper).
  *
- * @author Jose Macchi - Geosolutions
+ * @author Jose Macchi - GeoSolutions
  */
 public class ResultPrimaryKey {
     private final String table;

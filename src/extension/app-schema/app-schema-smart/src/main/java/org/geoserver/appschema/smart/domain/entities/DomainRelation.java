@@ -1,53 +1,54 @@
 package org.geoserver.appschema.smart.domain.entities;
 
-import org.geoserver.appschema.smart.domain.DomainModelVisitorImpl;
+import org.geoserver.appschema.smart.domain.DomainModelVisitor;
 
 /**
  * Class representing a relation between two entities on the Smart AppSchema model.
  *
- * @author Jose Macchi - Geosolutions
+ * @author Jose Macchi - GeoSolutions
  */
 public final class DomainRelation {
 
-    private DomainEntityAttribute sourceAttribute;
-    private DomainEntityAttribute destinationAttribute;
+    private DomainEntity containingEntity;
+    private DomainEntity destinationEntity;
+    private DomainEntitySimpleAttribute containingKeyAttribute;
+    private DomainEntitySimpleAttribute destinationKeyAttribute;
 
-    private DomainRelationType relationType;
-
-    public DomainEntity getSourceEntity() {
-        return sourceAttribute.getEntity();
+    public DomainEntity getContainingEntity() {
+        return containingEntity;
     }
 
     public DomainEntity getDestinationEntity() {
-        return destinationAttribute.getEntity();
+        return destinationEntity;
     }
 
-    public DomainRelationType getRelationType() {
-        return relationType;
+    public void setContainingEntity(DomainEntity containingEntity) {
+        this.containingEntity = containingEntity;
     }
 
-    public void setRelationType(DomainRelationType relationType) {
-        this.relationType = relationType;
+    public void setDestinationEntity(DomainEntity destinationEntity) {
+        this.destinationEntity = destinationEntity;
     }
 
-    public void accept(DomainModelVisitorImpl visitor) {
-        visitor.visit(this.getSourceEntity());
-        visitor.visit(this.getDestinationEntity());
+    public DomainEntitySimpleAttribute getContainingKeyAttribute() {
+        return containingKeyAttribute;
     }
 
-    public DomainEntityAttribute getSourceAttribute() {
-        return sourceAttribute;
+    public void setContainingKeyAttribute(DomainEntitySimpleAttribute containingKeyAttribute) {
+        this.containingKeyAttribute = containingKeyAttribute;
     }
 
-    public void setSourceAttribute(DomainEntityAttribute sourceAttribute) {
-        this.sourceAttribute = sourceAttribute;
+    public DomainEntitySimpleAttribute getDestinationKeyAttribute() {
+        return destinationKeyAttribute;
     }
 
-    public DomainEntityAttribute getDestinationAttribute() {
-        return destinationAttribute;
+    public void setDestinationKeyAttribute(DomainEntitySimpleAttribute destinationKeyAttribute) {
+        this.destinationKeyAttribute = destinationKeyAttribute;
     }
 
-    public void setDestinationAttribute(DomainEntityAttribute destinationAttribute) {
-        this.destinationAttribute = destinationAttribute;
+    public void accept(DomainModelVisitor visitor) {
+    	visitor.visitDomainRelation(this);   
+    	destinationEntity.accept(visitor, false); 	
     }
+
 }

@@ -1,15 +1,16 @@
 package org.geoserver.appschema.smart.domain.entities;
 
+import org.geoserver.appschema.smart.domain.DomainModelVisitor;
+
 /**
  * Class representing an attribute of an entity on the Smart AppSchema model.
  *
- * @author Jose Macchi - Geosolutions
+ * @author Jose Macchi - GeoSolutions
  */
-public final class DomainEntityAttribute {
+public final class DomainEntitySimpleAttribute {
 
     private String name;
     private DomainAttributeType type;
-    private DomainEntity entity;
 
     public String getName() {
         return name;
@@ -26,12 +27,9 @@ public final class DomainEntityAttribute {
     public void setType(DomainAttributeType type) {
         this.type = type;
     }
-
-    public DomainEntity getEntity() {
-        return entity;
+    
+    public void accept(DomainModelVisitor visitor) {
+    	visitor.visitDomainEntitySimpleAttribute(this);
     }
 
-    public void setEntity(DomainEntity entity) {
-        this.entity = entity;
-    }
 }

@@ -6,7 +6,7 @@ import org.geoserver.appschema.smart.metadata.jdbc.JdbcColumnMetadata;
  * Helper for testing purposes. Represent columns results extracted from JDBC dataStores (metadata
  * access using JdbcHelper).
  *
- * @author Jose Macchi - Geosolutions
+ * @author Jose Macchi - GeoSolutions
  */
 public class ResultColumn {
     private final JdbcColumnMetadata jdbcColumn;

@@ -12,6 +12,7 @@ import java.util.logging.Logger;
 import org.geoserver.appschema.smart.SmartAppSchemaPostgisTestSupport;
 import org.geoserver.appschema.smart.metadata.AttributeMetadata;
 import org.geoserver.appschema.smart.metadata.EntityMetadata;
+import org.geoserver.appschema.smart.metadata.RelationMetadata;
 import org.geoserver.appschema.smart.metadata.jdbc.JdbcForeignKeyColumnMetadata;
 import org.geoserver.appschema.smart.metadata.jdbc.JdbcHelper;
 import org.geoserver.appschema.smart.metadata.jdbc.JdbcTableMetadata;
@@ -24,7 +25,7 @@ import org.junit.Test;
 /**
  * Tests related to use of JDBCHelper class.
  *
- * @author Jose Macchi - Geosolutions
+ * @author Jose Macchi - GeoSolutions
  */
 public class JdbcHelperTest extends SmartAppSchemaPostgisTestSupport {
 
@@ -39,9 +40,9 @@ public class JdbcHelperTest extends SmartAppSchemaPostgisTestSupport {
                 JDBC_HELPER.getPrimaryKeyColumns(metaData, tables);
         SmartAppSchemaTestHelper.printPrimaryKeys(pkMap);
 
-        // TODO: add assertions
+        assertEquals(true, !pkMap.isEmpty());
+        assertEquals(3, pkMap.size());
 
-        metaData.getConnection().close();
     }
 
     @Test
@@ -54,9 +55,8 @@ public class JdbcHelperTest extends SmartAppSchemaPostgisTestSupport {
             LOGGER.log(Level.INFO, t.getCatalog() + " - " + t.getSchema() + " - " + t.getName());
         }
 
-        // TODO: add assertions
+        assertEquals(3, tables.size());
 
-        metaData.getConnection().close();
     }
 
     @Test
@@ -70,9 +70,10 @@ public class JdbcHelperTest extends SmartAppSchemaPostgisTestSupport {
                 JDBC_HELPER.getPrimaryKeyColumns(metaData, tables);
         SmartAppSchemaTestHelper.printPrimaryKeys(pkMap);
 
-        // TODO: add assertions
+        assertEquals(true, !pkMap.isEmpty());
+        assertEquals(1, pkMap.size());
+        assertEquals(SCHEMA+".meteo_stations(id)",pkMap.get(pkMap.firstKey()).toString());
 
-        metaData.getConnection().close();
     }
 
     @Test
@@ -86,9 +87,14 @@ public class JdbcHelperTest extends SmartAppSchemaPostgisTestSupport {
                 JDBC_HELPER.getColumns(metaData, tables);
         SmartAppSchemaTestHelper.printColumns(cMap);
 
-        // TODO: add assertions
+        assertEquals(true, !cMap.isEmpty());
+        assertEquals(1, cMap.size());
+        assertEquals(4,cMap.get(cMap.firstKey()).size());
+        assertEquals("id",cMap.get(cMap.firstKey()).get(0).getName());
+        assertEquals("code",cMap.get(cMap.firstKey()).get(1).getName());
+        assertEquals("common_name",cMap.get(cMap.firstKey()).get(2).getName());
+        assertEquals("position",cMap.get(cMap.firstKey()).get(3).getName());
 
-        metaData.getConnection().close();
     }
 
     @Test
@@ -102,9 +108,15 @@ public class JdbcHelperTest extends SmartAppSchemaPostgisTestSupport {
                 JDBC_HELPER.getColumns(metaData, tables);
         SmartAppSchemaTestHelper.printColumns(cMap);
 
-        // TODO: add assertions
+        assertEquals(true, !cMap.isEmpty());
+        assertEquals(1, cMap.size());
+        assertEquals(5,cMap.get(cMap.firstKey()).size());
+        assertEquals("id",cMap.get(cMap.firstKey()).get(0).getName());
+        assertEquals("parameter_id",cMap.get(cMap.firstKey()).get(1).getName());
+        assertEquals("station_id",cMap.get(cMap.firstKey()).get(2).getName());
+        assertEquals("time",cMap.get(cMap.firstKey()).get(3).getName());
+        assertEquals("value",cMap.get(cMap.firstKey()).get(4).getName());
 
-        metaData.getConnection().close();
     }
 
     @Test
@@ -119,9 +131,9 @@ public class JdbcHelperTest extends SmartAppSchemaPostgisTestSupport {
                 JDBC_HELPER.getIndexColumns(metaData, tables, true, true);
         SmartAppSchemaTestHelper.printForeignKeys(fkMap, pkMap, uniqueIndexMultimap);
 
-        // TODO: add assertions
+        assertEquals(true, !fkMap.isEmpty());
+        assertEquals(2, fkMap.size());
 
-        metaData.getConnection().close();
     }
 
     @Test
@@ -140,9 +152,9 @@ public class JdbcHelperTest extends SmartAppSchemaPostgisTestSupport {
                 JDBC_HELPER.getIndexesByTable(metaData, table, true, true);
         SmartAppSchemaTestHelper.printForeignKeys(fkMultimap, pkMap, uniqueIndexMultimap);
 
-        // TODO: add assertions
+        assertEquals(true, !fkMultimap.isEmpty());
+        assertEquals(2, fkMultimap.size());
 
-        metaData.getConnection().close();
     }
 
     @Test
@@ -161,9 +173,9 @@ public class JdbcHelperTest extends SmartAppSchemaPostgisTestSupport {
                 JDBC_HELPER.getIndexesByTable(metaData, table, true, true);
         SmartAppSchemaTestHelper.printForeignKeys(fkMultimap, pkMap, uniqueIndexMultimap);
 
-        // TODO: add assertions
+        // no fk at meteo_stations
+        assertEquals(null, fkMultimap);
 
-        metaData.getConnection().close();
     }
 
     @Test
@@ -174,9 +186,12 @@ public class JdbcHelperTest extends SmartAppSchemaPostgisTestSupport {
                 JDBC_HELPER.getIndexColumns(metaData, tables, false, true);
         SmartAppSchemaTestHelper.printIndexes(uniqueIndexMultimap);
 
-        // TODO: add assertions
+        assertEquals(true, !uniqueIndexMultimap.isEmpty());
+        assertEquals(3, uniqueIndexMultimap.size());
+        assertEquals(true,uniqueIndexMultimap.containsKey(SCHEMA+".meteo_observations - meteo_observations_pkey"));
+        assertEquals(true,uniqueIndexMultimap.containsKey(SCHEMA+".meteo_parameters - meteo_parameters_pkey"));
+        assertEquals(true,uniqueIndexMultimap.containsKey(SCHEMA+".meteo_stations - meteo_stations_pkey"));
 
-        metaData.getConnection().close();
     }
 
     @Test
@@ -188,9 +203,10 @@ public class JdbcHelperTest extends SmartAppSchemaPostgisTestSupport {
                 JDBC_HELPER.getIndexesByTable(metaData, table, false, true);
         SmartAppSchemaTestHelper.printIndexes(uniqueIndexMultimap);
 
-        // TODO: add assertions
+        assertEquals(true, !uniqueIndexMultimap.isEmpty());
+        assertEquals(1, uniqueIndexMultimap.size());
+        assertEquals(true,uniqueIndexMultimap.containsKey(SCHEMA+".meteo_stations - meteo_stations_pkey"));
 
-        metaData.getConnection().close();
     }
 
     @Test
@@ -201,9 +217,12 @@ public class JdbcHelperTest extends SmartAppSchemaPostgisTestSupport {
                 JDBC_HELPER.getIndexColumns(metaData, tables, true, true);
         SmartAppSchemaTestHelper.printIndexes(uniqueIndexMultimap);
 
-        // TODO: add assertions
+        assertEquals(true, !uniqueIndexMultimap.isEmpty());
+        assertEquals(3, uniqueIndexMultimap.size());
+        assertEquals(true,uniqueIndexMultimap.containsKey(SCHEMA+".meteo_observations - meteo_observations_pkey"));
+        assertEquals(true,uniqueIndexMultimap.containsKey(SCHEMA+".meteo_parameters - meteo_parameters_pkey"));
+        assertEquals(true,uniqueIndexMultimap.containsKey(SCHEMA+".meteo_stations - meteo_stations_pkey"));
 
-        metaData.getConnection().close();
     }
 
     @Test
@@ -215,8 +234,9 @@ public class JdbcHelperTest extends SmartAppSchemaPostgisTestSupport {
                 JDBC_HELPER.getIndexesByTable(metaData, table, true, true);
         SmartAppSchemaTestHelper.printIndexes(uniqueIndexMultimap);
 
-        // TODO: add assertions
+        assertEquals(true, !uniqueIndexMultimap.isEmpty());
+        assertEquals(1, uniqueIndexMultimap.size());
+        assertEquals(true,uniqueIndexMultimap.containsKey(SCHEMA+".meteo_stations - meteo_stations_pkey"));
 
-        metaData.getConnection().close();
     }
 }

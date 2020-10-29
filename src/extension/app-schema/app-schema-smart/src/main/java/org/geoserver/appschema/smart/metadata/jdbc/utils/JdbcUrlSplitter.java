@@ -1,4 +1,4 @@
-package org.geoserver.appschema.smart.domain.metadata.jdbc.utils;
+package org.geoserver.appschema.smart.metadata.jdbc.utils;
 
 /**
  * Utilities for getting parameters information from a JDBC URL

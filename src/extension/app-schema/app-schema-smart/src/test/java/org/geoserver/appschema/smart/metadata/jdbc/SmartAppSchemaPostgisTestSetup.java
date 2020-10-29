@@ -1,23 +1,34 @@
 package org.geoserver.appschema.smart.metadata.jdbc;
 
-import org.geotools.data.postgis.PostgisNGDataStoreFactory;
-import org.geotools.jdbc.JDBCDataStoreFactory;
-import org.geotools.jdbc.JDBCTestSetup;
+import org.geoserver.test.onlineTest.setup.ReferenceDataPostgisSetup;
 
 /**
- * Implementation of JDBCTestSetup for SmartAppSchema Postgis tests.
+ * Implementation of ReferenceDataPostgisSetup for SmartAppSchema Postgis tests.
  *
- * @author Jose Macchi - Geosolutions
+ * @author Jose Macchi - GeoSolutions
  */
-public class SmartAppSchemaPostgisTestSetup extends JDBCTestSetup { //extends AppSchemaTestPostgisSetup {
+public class SmartAppSchemaPostgisTestSetup extends ReferenceDataPostgisSetup { 
 
-	/*public SmartAppSchemaPostgisTestSetup(Map<String, File> propertyFiles) throws Exception {
-		super(propertyFiles);
-	}*/
+	private String sql;
+	public static final String ONLINE_DB_SCHEMA = "smartappschematest";
 
-	@Override
-	protected JDBCDataStoreFactory createDataStoreFactory() {
-	    return new PostgisNGDataStoreFactory();
+    public static SmartAppSchemaPostgisTestSetup getInstance(String sql)
+            throws Exception {
+        return new SmartAppSchemaPostgisTestSetup(sql);
+    }
+    
+	public SmartAppSchemaPostgisTestSetup(String sql) throws Exception {
+		super();
+		this.sql = sql;
 	}
 	
+    protected void runSqlInsertScript() throws Exception {
+        this.run(sql, false);
+    }
+    
+    @Override
+    public void tearDown() throws Exception {
+    	this.run("DROP SCHEMA IF EXISTS "+ONLINE_DB_SCHEMA+" CASCADE;");
+    	getDataSource().getConnection().close();
+    }
 }

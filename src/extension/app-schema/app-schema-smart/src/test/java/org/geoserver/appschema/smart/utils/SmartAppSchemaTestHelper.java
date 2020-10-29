@@ -52,7 +52,7 @@ import org.w3c.dom.Document;
 /**
  * Smart AppSchema Helper for testing purposes.
  *
- * @author Jose Macchi - Geosolutions
+ * @author Jose Macchi - GeoSolutions
  */
 public class SmartAppSchemaTestHelper {
 
@@ -292,7 +292,7 @@ public class SmartAppSchemaTestHelper {
         transf.transform(source, file);
     }
 
-    public static InputStream getFileFromResourceAsStream(String fileName) {
+    public static InputStream getResourceAsStream(String fileName) {
         ClassLoader classLoader = SmartAppSchemaTestHelper.class.getClassLoader();
         InputStream inputStream = classLoader.getResourceAsStream(fileName);
         if (inputStream == null) {
@@ -301,7 +301,7 @@ public class SmartAppSchemaTestHelper {
             return inputStream;
         }
     }
-    
+
     public static File getResourceAsFile(String resourcePath) {
         try {
             InputStream in = ClassLoader.getSystemClassLoader().getResourceAsStream(resourcePath);

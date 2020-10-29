@@ -17,9 +17,9 @@
   </targetTypes>
   <typeMappings>
     <FeatureTypeMapping>
-      <sourceDataStore>meteo</sourceDataStore>
+      <sourceDataStore>smartappschematest</sourceDataStore>
       <sourceType>meteo_stations</sourceType>
-      <targetElement>mt:meteo_stations</targetElement>
+      <targetElement>mt:meteo_stations_t</targetElement>
       <attributeMappings>
         <AttributeMapping>
           <targetAttribute>mt:id</targetAttribute>
@@ -45,20 +45,100 @@
             <OCQL>position</OCQL>
           </sourceExpression>
         </AttributeMapping>
+        <AttributeMapping>
+          <isMutiple>true</isMutiple>
+          <targetAttribute>mt:meteo_observations_t</targetAttribute>
+          <sourceExpression>
+            <linkField>FEATURE_LINK[1]</linkField>
+            <linkElement>mt:meteo_observations_t</linkElement>
+            <OCQL>id</OCQL>
+          </sourceExpression>
+        </AttributeMapping>
+      </attributeMappings>
+    </FeatureTypeMapping>
+    <FeatureTypeMapping>
+      <sourceDataStore>smartappschematest</sourceDataStore>
+      <sourceType>meteo_observations</sourceType>
+      <targetElement>mt:meteo_observations_t</targetElement>
+      <attributeMappings>
+        <AttributeMapping>
+          <targetAttribute>FEATURE_LINK[1]</targetAttribute>
+          <sourceExpression>
+            <OCQL>station_id</OCQL>
+          </sourceExpression>
+        </AttributeMapping>
+        <AttributeMapping>
+          <targetAttribute>mt:id</targetAttribute>
+          <sourceExpression>
+            <OCQL>id</OCQL>
+          </sourceExpression>
+        </AttributeMapping>
+        <AttributeMapping>
+          <targetAttribute>mt:time</targetAttribute>
+          <sourceExpression>
+            <OCQL>time</OCQL>
+          </sourceExpression>
+        </AttributeMapping>
+        <AttributeMapping>
+          <targetAttribute>mt:value</targetAttribute>
+          <sourceExpression>
+            <OCQL>value</OCQL>
+          </sourceExpression>
+        </AttributeMapping>
+        <AttributeMapping>
+          <isMutiple>true</isMutiple>
+          <targetAttribute>mt:meteo_parameters_t</targetAttribute>
+          <sourceExpression>
+            <linkField>FEATURE_LINK[1]</linkField>
+            <linkElement>mt:meteo_parameters_t</linkElement>
+            <OCQL>parameter_id</OCQL>
+          </sourceExpression>
+        </AttributeMapping>
+      </attributeMappings>
+    </FeatureTypeMapping>
+    <FeatureTypeMapping>
+      <sourceDataStore>smartappschematest</sourceDataStore>
+      <sourceType>meteo_parameters</sourceType>
+      <targetElement>mt:meteo_parameters_t</targetElement>
+      <attributeMappings>
+        <AttributeMapping>
+          <targetAttribute>FEATURE_LINK[1]</targetAttribute>
+          <sourceExpression>
+            <OCQL>id</OCQL>
+          </sourceExpression>
+        </AttributeMapping>
+        <AttributeMapping>
+          <targetAttribute>mt:id</targetAttribute>
+          <sourceExpression>
+            <OCQL>id</OCQL>
+          </sourceExpression>
+        </AttributeMapping>
+        <AttributeMapping>
+          <targetAttribute>mt:param_name</targetAttribute>
+          <sourceExpression>
+            <OCQL>param_name</OCQL>
+          </sourceExpression>
+        </AttributeMapping>
+        <AttributeMapping>
+          <targetAttribute>mt:param_unit</targetAttribute>
+          <sourceExpression>
+            <OCQL>param_unit</OCQL>
+          </sourceExpression>
+        </AttributeMapping>
       </attributeMappings>
     </FeatureTypeMapping>
   </typeMappings>
   <sourceDataStores>
     <DataStore>
-      <id>meteo</id>
+      <id>smartappschematest</id>
       <parameters>
         <Parameter>
           <name>schema</name>
-          <value>meteo</value>
+          <value>smartappschematest</value>
         </Parameter>
         <Parameter>
           <name>database</name>
-          <value>gis</value>
+          <value></value>
         </Parameter>
         <Parameter>
           <name>port</name>
@@ -66,7 +146,11 @@
         </Parameter>
         <Parameter>
           <name>passwd</name>
-          <value>docker</value>
+          <value></value>
+        </Parameter>
+        <Parameter>
+          <name>Expose primary keys</name>
+          <value>true</value>
         </Parameter>
         <Parameter>
           <name>dbtype</name>
@@ -74,11 +158,11 @@
         </Parameter>
         <Parameter>
           <name>host</name>
-          <value>localhost</value>
+          <value></value>
         </Parameter>
         <Parameter>
           <name>user</name>
-          <value>docker</value>
+          <value></value>
         </Parameter>
       </parameters>
     </DataStore>

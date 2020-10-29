@@ -13,7 +13,7 @@ import org.geoserver.appschema.smart.metadata.RelationMetadata;
  * Concrete class that implements access to JDBC dataStore metadata model, extending
  * DataStoreMetadataImpl.
  *
- * @author Jose Macchi - Geosolutions
+ * @author Jose Macchi - GeoSolutions
  */
 public class JdbcDataStoreMetadata extends DataStoreMetadataImpl {
 
@@ -24,19 +24,19 @@ public class JdbcDataStoreMetadata extends DataStoreMetadataImpl {
     @Override
     public void load() throws Exception {
         JdbcDataStoreMetadataConfig jdbcConfig = (JdbcDataStoreMetadataConfig) this.config;
-        // Load entities
+        // load entities
         entities = new ArrayList<EntityMetadata>();
         List<JdbcTableMetadata> tableList =
                 JdbcHelper.getInstance()
                         .getSchemaTables(
                                 jdbcConfig.getConnection().getMetaData(), jdbcConfig.getSchema());
         entities.addAll(tableList);
-        // Load attributes and relations for each entity
+        // load attributes and relations for each entity
         relations = new ArrayList<RelationMetadata>();
         Iterator<JdbcTableMetadata> iTables = tableList.iterator();
         while (iTables.hasNext()) {
             JdbcTableMetadata jTable = iTables.next();
-            // Load attributes
+            // load attributes
             List<AttributeMetadata> attributes =
                     JdbcHelper.getInstance()
                             .getColumnsByTable(jdbcConfig.getConnection().getMetaData(), jTable);
@@ -44,7 +44,7 @@ public class JdbcDataStoreMetadata extends DataStoreMetadataImpl {
                     attributeMetadata -> {
                         jTable.addAttribute(attributeMetadata);
                     });
-            // Load relations
+            // load relations
             List<RelationMetadata> tableRelations =
                     JdbcHelper.getInstance()
                             .getRelationsByTable(jdbcConfig.getConnection().getMetaData(), jTable);

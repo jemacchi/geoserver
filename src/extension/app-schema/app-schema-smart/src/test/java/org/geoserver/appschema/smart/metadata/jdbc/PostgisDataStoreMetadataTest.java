@@ -14,7 +14,7 @@ import org.junit.Test;
 /**
  * Tests in Smart AppSchema related to use of a DataStoreMetadata linked to a JDBC connection.
  *
- * @author Jose Macchi - Geosolutions
+ * @author Jose Macchi - GeoSolutions
  */
 public class PostgisDataStoreMetadataTest extends SmartAppSchemaPostgisTestSupport {
 
@@ -36,7 +36,8 @@ public class PostgisDataStoreMetadataTest extends SmartAppSchemaPostgisTestSuppo
         List<RelationMetadata> relations = dm.getDataStoreRelations();
         SmartAppSchemaTestHelper.printObjectsFromList(relations);
 
-        // TODO: add assertions
+        assertEquals(3, entities.size());
+        assertEquals(4, relations.size());
 
         metaData.getConnection().close();
     }
@@ -48,7 +49,7 @@ public class PostgisDataStoreMetadataTest extends SmartAppSchemaPostgisTestSuppo
                 new JdbcTableMetadata(metaData.getConnection(), null, SCHEMA, "meteo_observations");
         SmartAppSchemaTestHelper.printObjectsFromList(entity.getAttributes());
 
-        // TODO: add assertions
+        assertEquals(5, entity.getAttributes().size());
 
         metaData.getConnection().close();
     }
@@ -60,7 +61,7 @@ public class PostgisDataStoreMetadataTest extends SmartAppSchemaPostgisTestSuppo
                 new JdbcTableMetadata(metaData.getConnection(), null, SCHEMA, "meteo_observations");
         SmartAppSchemaTestHelper.printObjectsFromList(entity.getRelations());
 
-        // TODO: add assertions
+        assertEquals(4, entity.getRelations().size());
 
         metaData.getConnection().close();
     }

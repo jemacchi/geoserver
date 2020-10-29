@@ -6,7 +6,7 @@ import java.util.List;
  * Interface that provides access to metadata from a particular DataStore. It identifies different
  * objects that defines the abstract model. Those are Entities, Relations and Attributes.
  *
- * @author Jose Macchi - Geosolutions
+ * @author Jose Macchi - GeoSolutions
  */
 public interface DataStoreMetadata {
 

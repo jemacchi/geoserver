@@ -9,7 +9,7 @@ import java.util.List;
  * some of the generic methods in the interface DataStoreMetadata, delegating some specific methods
  * to the concrete DataStores classes implementations (ie. JdbcDataStoreMetadata)
  *
- * @author Jose Macchi - Geosolutions
+ * @author Jose Macchi - GeoSolutions
  */
 public abstract class DataStoreMetadataImpl implements DataStoreMetadata {
 
@@ -35,10 +35,9 @@ public abstract class DataStoreMetadataImpl implements DataStoreMetadata {
         Iterator<RelationMetadata> ir = this.relations.iterator();
         while (ir.hasNext()) {
             RelationMetadata relation = ir.next();
-            if (relation.participatesIn(entity)) {
+            if (relation.participatesInRelation(entity.getName())) {
                 output.add(relation);
             }
-            ;
         }
         return output;
     }

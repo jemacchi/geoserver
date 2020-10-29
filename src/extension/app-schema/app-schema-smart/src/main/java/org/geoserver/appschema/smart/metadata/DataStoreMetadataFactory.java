@@ -7,7 +7,7 @@ import org.geoserver.appschema.smart.metadata.jdbc.JdbcDataStoreMetadataConfig;
  * Factory class that builds a DataStoreMetadata based on the DataStoreMetadataConfig passed as
  * argument.
  *
- * @author Jose Macchi - Geosolutions
+ * @author Jose Macchi - GeoSolutions
  */
 public class DataStoreMetadataFactory {
 
