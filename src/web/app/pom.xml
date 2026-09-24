@@ -1828,6 +1828,16 @@
       </dependencies>
     </profile>
     <profile>
+      <id>portolan</id>
+      <dependencies>
+        <dependency>
+          <groupId>org.geoserver.community</groupId>
+          <artifactId>gs-portolan</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+      </dependencies>
+    </profile>
+    <profile>
       <id>schemaless-features</id>
       <dependencies>
         <dependency>
