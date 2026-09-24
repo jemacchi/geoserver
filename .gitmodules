@@ -1,0 +1,3 @@
+[submodule "src/community/portolan"]
+	path = src/community/portolan
+	url = git@github.com:jemacchi/geoserver-portolan.git

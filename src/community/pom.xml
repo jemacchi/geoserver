@@ -525,6 +525,12 @@
       </modules>
     </profile>
     <profile>
+      <id>portolan</id>
+      <modules>
+        <module>portolan</module>
+      </modules>
+    </profile>
+    <profile>
       <id>duckdb</id>
       <modules>
         <module>duckdb</module>
