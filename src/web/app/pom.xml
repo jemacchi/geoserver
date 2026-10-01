@@ -1831,8 +1831,8 @@
       <id>portolan</id>
       <dependencies>
         <dependency>
-          <groupId>org.geoserver.community</groupId>
-          <artifactId>gs-portolan</artifactId>
+          <groupId>io.multivers.geoserver</groupId>
+          <artifactId>geoserver-portolan</artifactId>
           <version>${project.version}</version>
         </dependency>
       </dependencies>
