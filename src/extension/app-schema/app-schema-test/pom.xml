@@ -241,6 +241,11 @@
               <include>**/*.sld</include>
               <include>**/*.png</include>
               <include>**/*.json</include>
+              <include>**/*.shp</include>
+              <include>**/*.shx</include>
+              <include>**/*.dbf</include>
+              <include>**/*.prj</include>
+              <include>**/*.cpg</include>
             </includes>
           </testResource>
         </testResources>
@@ -291,6 +296,11 @@
               <include>**/*.sld</include>
               <include>**/*.png</include>
               <include>**/*.json</include>
+              <include>**/*.shp</include>
+              <include>**/*.shx</include>
+              <include>**/*.dbf</include>
+              <include>**/*.prj</include>
+              <include>**/*.cpg</include>
             </includes>
           </testResource>
         </testResources>

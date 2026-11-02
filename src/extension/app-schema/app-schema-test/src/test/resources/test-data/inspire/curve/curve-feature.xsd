@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:gml="http://www.opengis.net/gml/3.2"
+    xmlns:ex="http://example.com/inspire-curve-repro"
+    targetNamespace="http://example.com/inspire-curve-repro"
+    elementFormDefault="qualified"
+    version="1.0">
+
+  <xs:import namespace="http://www.opengis.net/gml/3.2"
+             schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+
+  <xs:element name="CurveFeature"
+              type="ex:CurveFeatureType"
+              substitutionGroup="gml:AbstractFeature"/>
+
+  <xs:complexType name="CurveFeatureType">
+    <xs:complexContent>
+      <xs:extension base="gml:AbstractFeatureType">
+        <xs:sequence>
+          <xs:element name="name" type="xs:string" minOccurs="0"/>
+          <xs:element name="geometry" type="gml:CurvePropertyType" minOccurs="1"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+</xs:schema>

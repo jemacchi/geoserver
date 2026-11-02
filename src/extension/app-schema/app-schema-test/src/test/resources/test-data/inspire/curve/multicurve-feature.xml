@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<as:AppSchemaDataAccess
+    xmlns:as="http://www.geotools.org/app-schema"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.geotools.org/app-schema AppSchemaDataAccess.xsd">
+
+  <namespaces>
+    <Namespace>
+      <prefix>exmc</prefix>
+      <uri>http://example.com/inspire-multicurve-repro</uri>
+    </Namespace>
+    <Namespace>
+      <prefix>gml</prefix>
+      <uri>http://www.opengis.net/gml/3.2</uri>
+    </Namespace>
+  </namespaces>
+
+  <sourceDataStores>
+    <DataStore>
+      <id>shapefile</id>
+      <parameters>
+        <Parameter>
+          <name>url</name>
+          <value>file:./multipart_curve.shp</value>
+        </Parameter>
+        <Parameter>
+          <name>memory mapped buffer</name>
+          <value>false</value>
+        </Parameter>
+        <Parameter>
+          <name>create spatial index</name>
+          <value>true</value>
+        </Parameter>
+        <Parameter>
+          <name>charset</name>
+          <value>UTF-8</value>
+        </Parameter>
+      </parameters>
+    </DataStore>
+  </sourceDataStores>
+
+  <targetTypes>
+    <FeatureType>
+      <schemaUri>./multicurve-feature.xsd</schemaUri>
+    </FeatureType>
+  </targetTypes>
+
+  <typeMappings>
+    <FeatureTypeMapping>
+      <sourceDataStore>shapefile</sourceDataStore>
+      <sourceType>multipart_curve</sourceType>
+      <targetElement>exmc:MultiCurveFeature</targetElement>
+
+      <attributeMappings>
+        <AttributeMapping>
+          <targetAttribute>exmc:MultiCurveFeature</targetAttribute>
+          <idExpression>
+            <OCQL>strConcat('MultiCurveFeature.', ID)</OCQL>
+          </idExpression>
+        </AttributeMapping>
+
+        <AttributeMapping>
+          <targetAttribute>exmc:name</targetAttribute>
+          <sourceExpression>
+            <OCQL>NAME</OCQL>
+          </sourceExpression>
+        </AttributeMapping>
+
+        <AttributeMapping>
+          <targetAttribute>exmc:geometry</targetAttribute>
+          <idExpression>
+            <OCQL>strConcat('MultiCurveGeometry.', ID)</OCQL>
+          </idExpression>
+          <sourceExpression>
+            <OCQL>the_geom</OCQL>
+          </sourceExpression>
+        </AttributeMapping>
+      </attributeMappings>
+    </FeatureTypeMapping>
+  </typeMappings>
+</as:AppSchemaDataAccess>

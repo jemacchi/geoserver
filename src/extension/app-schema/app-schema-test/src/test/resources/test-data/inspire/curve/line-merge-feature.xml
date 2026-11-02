@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<as:AppSchemaDataAccess
+    xmlns:as="http://www.geotools.org/app-schema"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.geotools.org/app-schema AppSchemaDataAccess.xsd">
+
+  <namespaces>
+    <Namespace>
+      <prefix>exlm</prefix>
+      <uri>http://example.com/inspire-line-merge-repro</uri>
+    </Namespace>
+    <Namespace>
+      <prefix>gml</prefix>
+      <uri>http://www.opengis.net/gml/3.2</uri>
+    </Namespace>
+  </namespaces>
+
+  <sourceDataStores>
+    <DataStore>
+      <id>shapefile</id>
+      <parameters>
+        <Parameter>
+          <name>url</name>
+          <value>file:./line_merge_cases.shp</value>
+        </Parameter>
+        <Parameter>
+          <name>memory mapped buffer</name>
+          <value>false</value>
+        </Parameter>
+        <Parameter>
+          <name>create spatial index</name>
+          <value>true</value>
+        </Parameter>
+        <Parameter>
+          <name>charset</name>
+          <value>UTF-8</value>
+        </Parameter>
+      </parameters>
+    </DataStore>
+  </sourceDataStores>
+
+  <targetTypes>
+    <FeatureType>
+      <schemaUri>./line-merge-feature.xsd</schemaUri>
+    </FeatureType>
+  </targetTypes>
+
+  <typeMappings>
+    <FeatureTypeMapping>
+      <sourceDataStore>shapefile</sourceDataStore>
+      <sourceType>line_merge_cases</sourceType>
+      <targetElement>exlm:CurveFeature</targetElement>
+
+      <attributeMappings>
+        <AttributeMapping>
+          <targetAttribute>exlm:CurveFeature</targetAttribute>
+          <idExpression>
+            <OCQL>strConcat('CurveFeature.', ID)</OCQL>
+          </idExpression>
+        </AttributeMapping>
+
+        <AttributeMapping>
+          <targetAttribute>exlm:name</targetAttribute>
+          <sourceExpression>
+            <OCQL>NAME</OCQL>
+          </sourceExpression>
+        </AttributeMapping>
+
+        <AttributeMapping>
+          <targetAttribute>exlm:geometry</targetAttribute>
+          <idExpression>
+            <OCQL>strConcat('CurveGeometry.', ID)</OCQL>
+          </idExpression>
+          <sourceExpression>
+            <OCQL>the_geom</OCQL>
+          </sourceExpression>
+        </AttributeMapping>
+      </attributeMappings>
+    </FeatureTypeMapping>
+  </typeMappings>
+</as:AppSchemaDataAccess>
